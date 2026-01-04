@@ -48,7 +48,7 @@ export class ButtonComponent {
       sm: 'px-3 py-1.5 text-xs',
       md: 'px-4 py-2 text-sm',
       lg: 'px-5 py-2.5 text-base',
-      icon: 'p-2', // For icon-only buttons
+      icon: 'p-2',
     };
 
     const variantClasses = {
@@ -62,7 +62,6 @@ export class ButtonComponent {
       icon: 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full',
     };
 
-    // Specific rounded classes based on variant/size
     const roundedClass =
       this.size === 'icon' || this.variant === 'icon' ? 'rounded-full' : 'rounded-lg';
 

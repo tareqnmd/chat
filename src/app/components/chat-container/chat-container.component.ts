@@ -28,7 +28,7 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
       <!-- Main Scrollable Area -->
       <div class="flex-1 overflow-y-auto w-full">
         <div class="min-h-full flex flex-col">
-          @if (chatState.isInitialLoading) {
+          @if (chatState.isInitialLoading && id && id !== 'new') {
             <div class="flex-1 flex items-center justify-center p-6 w-full">
               <div class="flex flex-col items-center gap-y-4 animate-pulse">
                 <div
@@ -164,6 +164,12 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   async onSendMessage(message: string): Promise<void> {
+    const apiKey = this.settingsService.getApiKey();
+    if (!apiKey) {
+      toast.error('API Key required to start a chat. Please go to Settings.');
+      return;
+    }
+
     let activeId = this.chatService.getActiveSessionId();
     if (!activeId) {
       activeId = await this.chatService.createSession();
@@ -173,6 +179,12 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   async onPromptSelected(prompt: string): Promise<void> {
+    const apiKey = this.settingsService.getApiKey();
+    if (!apiKey) {
+      toast.error('API Key required to start a chat. Please go to Settings.');
+      return;
+    }
+
     let activeId = this.chatService.getActiveSessionId();
     if (!activeId) {
       activeId = await this.chatService.createSession();

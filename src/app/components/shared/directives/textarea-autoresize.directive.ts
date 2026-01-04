@@ -8,7 +8,6 @@ export class TextareaAutoresizeDirective implements OnInit {
   constructor(private elementRef: ElementRef<HTMLTextAreaElement>) {}
 
   ngOnInit(): void {
-    // Initial resize in case there is content
     this.adjust();
   }
 
@@ -17,7 +16,6 @@ export class TextareaAutoresizeDirective implements OnInit {
     this.adjust();
   }
 
-  // Also listen to window resize to adjust if width changes
   @HostListener('window:resize')
   onResize(): void {
     this.adjust();

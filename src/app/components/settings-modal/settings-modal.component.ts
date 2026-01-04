@@ -195,7 +195,6 @@ import { ButtonComponent } from '../shared/button/button.component';
 export class SettingsModalComponent {
   @Output() close = new EventEmitter<void>();
 
-  // Expose enums to template
   readonly AIProvider = AIProvider;
   readonly ThemeMode = ThemeMode;
   readonly VerificationStatus = VerificationStatus;
@@ -213,7 +212,7 @@ export class SettingsModalComponent {
 
   constructor(
     private settingsService: SettingsService,
-    private openaiService: OpenaiService, // Inject for verification
+    private openaiService: OpenaiService,
   ) {
     const settings = this.settingsService.getSettings();
     this.apiKey = settings.apiKey || '';
@@ -227,7 +226,7 @@ export class SettingsModalComponent {
     if (this.provider === AIProvider.OPENAI) {
       this.baseUrl = 'https://api.openai.com/v1';
     } else {
-      this.baseUrl = ''; // Clear for custom
+      this.baseUrl = '';
     }
   }
 
@@ -244,7 +243,7 @@ export class SettingsModalComponent {
       this.verificationStatus = VerificationStatus.ERROR;
     } finally {
       this.isVerifying = false;
-      // Reset status after a few seconds
+
       setTimeout(() => {
         if (this.verificationStatus !== VerificationStatus.IDLE) {
           this.verificationStatus = VerificationStatus.IDLE;

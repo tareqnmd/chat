@@ -48,19 +48,32 @@ export class ChatService {
   }
 
   private async initStorage(): Promise<void> {
-    await this.storageService.init();
-    await this.loadSessionsFromStorage();
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Storage initialization timed out')), 5000),
+    );
+
+    try {
+      await Promise.race([this.storageService.init(), timeout]);
+      await this.loadSessionsFromStorage();
+    } catch (error) {
+      console.error('Storage initialization failed or timed out', error);
+      this.isInitializedSubject.next(true);
+      this.chatStateSubject.next({
+        ...this.chatStateSubject.value,
+        isInitialLoading: false,
+        error: 'Failed to initialize storage. Please refresh.',
+      });
+    }
   }
 
   private async loadSessionsFromStorage(): Promise<void> {
     try {
-      // 1. Check for legacy localStorage data
       const storedSessions = localStorage.getItem('chat-sessions');
 
       if (storedSessions) {
         try {
           const parsedSessions: Record<string, ChatSession> = JSON.parse(storedSessions);
-          // Migrate to IndexedDB
+
           for (const session of Object.values(parsedSessions)) {
             await this.storageService.setItem(session.id, session);
           }
@@ -70,7 +83,6 @@ export class ChatService {
         }
       }
 
-      // 2. Check for even older legacy messages
       const legacyMessages = localStorage.getItem('chat-messages');
       if (legacyMessages) {
         try {
@@ -92,12 +104,10 @@ export class ChatService {
         }
       }
 
-      // 3. Load from IndexedDB
       const allSessions = await this.storageService.getAll();
       const sessionsRecord: Record<string, ChatSession> = {};
 
       allSessions.forEach((session) => {
-        // Ensure timestamps are Date objects if they were serialized
         session.messages.forEach((msg: any) => {
           if (typeof msg.timestamp === 'string' || typeof msg.timestamp === 'number') {
             msg.timestamp = new Date(msg.timestamp);
@@ -109,12 +119,10 @@ export class ChatService {
       this.sessionsSubject.next(sessionsRecord);
       this.isInitializedSubject.next(true);
 
-      // If there was an intended session to activate during initialization, do it now
       const currentActiveId = this.activeSessionIdSubject.value;
       if (currentActiveId && sessionsRecord[currentActiveId]) {
         this.activateSession(currentActiveId);
       } else if (currentActiveId && !sessionsRecord[currentActiveId]) {
-        // Actually not found after initialization
         this.chatStateSubject.next({
           ...this.chatStateSubject.value,
           isInitialLoading: false,
@@ -128,7 +136,7 @@ export class ChatService {
       }
     } catch (error: any) {
       console.error('Initialization failed', error);
-      this.isInitializedSubject.next(true); // Signal "done" anyway to unlock UI
+      this.isInitializedSubject.next(true);
       this.chatStateSubject.next({
         ...this.chatStateSubject.value,
         isInitialLoading: false,
@@ -163,14 +171,12 @@ export class ChatService {
     const isInitialized = this.isInitializedSubject.value;
 
     if (!isInitialized) {
-      // Just set the intended ID, loadSessionsFromStorage will handle it once ready
       this.activeSessionIdSubject.next(id);
       return;
     }
 
     const sessions = this.sessionsSubject.value;
     if (sessions[id]) {
-      // If we are already in this session, don't reset everything (prevents flicker)
       const isAlreadyActive = this.activeSessionIdSubject.value === id;
       const isInitialLoading = this.chatStateSubject.value.isInitialLoading;
 
@@ -200,7 +206,7 @@ export class ChatService {
     this.chatStateSubject.next({
       messages: [],
       isLoading: false,
-      isInitialLoading: this.chatStateSubject.value.isInitialLoading,
+      isInitialLoading: false,
       error: null,
     });
   }

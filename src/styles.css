@@ -2,20 +2,6 @@
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  /* Light Theme - High Contrast Accessibility */
-  --color-app-bg: #f8fafc;
-  --color-app-surface: #ffffff;
-  --color-text-primary: #0f172a; /* Deeper slate for text */
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-border-main: #e2e8f0;
-  --color-border-subtle: #f1f5f9;
-  --color-primary-main: #0f172a;
-  --color-primary-hover: #1e293b;
-}
-
-.dark {
-  /* Dark Theme - Premium Slate/Zinc */
   --color-app-bg: #020617;
   --color-app-surface: #0f172a;
   --color-text-primary: #f8fafc;

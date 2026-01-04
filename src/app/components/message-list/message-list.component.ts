@@ -169,7 +169,7 @@ export class MessageListComponent {
 
     navigator.clipboard.writeText(text).then(() => {
       btn.innerHTML = '<span>Copied!</span>';
-      btn.style.color = '#10b981'; // green-500
+      btn.style.color = '#10b981';
       setTimeout(() => {
         btn.innerHTML = originalText;
         btn.style.color = '';

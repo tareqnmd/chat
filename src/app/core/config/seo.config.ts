@@ -1,5 +1,5 @@
 export const SEO_CONFIG = {
-  baseUrl: 'https://chat.tareqnmd.com',
+  baseUrl: 'https://modern-ai-chatbot.example.com',
   ogType: 'website',
   ogImage: '/shared/og-image.png',
   twitterCard: 'summary_large_image',

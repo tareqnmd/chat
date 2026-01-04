@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <svg [class]="class" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <svg [class]="class" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
       <circle
         class="opacity-25"
         cx="12"

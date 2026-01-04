@@ -19,14 +19,12 @@ export class MetaService {
       { name: 'author', content: APP_METADATA.author },
       { name: 'robots', content: SEO_CONFIG.robots },
 
-      // Open Graph
       { property: 'og:title', content: APP_METADATA.name },
       { property: 'og:description', content: APP_METADATA.description },
       { property: 'og:type', content: SEO_CONFIG.ogType },
       { property: 'og:url', content: SEO_CONFIG.baseUrl },
       { property: 'og:image', content: SEO_CONFIG.baseUrl + SEO_CONFIG.ogImage },
 
-      // Twitter
       { name: 'twitter:card', content: SEO_CONFIG.twitterCard },
       { name: 'twitter:title', content: APP_METADATA.name },
       { name: 'twitter:description', content: APP_METADATA.description },

@@ -69,13 +69,10 @@ export class MessageInputComponent {
     if (this.message.trim() && !this.isLoading) {
       this.sendMessage.emit(this.message.trim());
       this.message = '';
-      // Reset height handled by binding or manually if needed,
-      // but directive adjusts on input.
-      // For reset, we might need a way to tell directive to reset or just manually set height.
-      // Since directive listens to input, we can just manually reset here.
+
       setTimeout(() => {
         if (this.textarea) {
-          this.textarea.nativeElement.style.height = 'auto'; // Reset to auto to recalc
+          this.textarea.nativeElement.style.height = 'auto';
         }
       });
     }
