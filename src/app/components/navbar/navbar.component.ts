@@ -10,6 +10,7 @@ import {
   IconSunComponent,
   IconTrashComponent,
 } from '../icons';
+import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
   selector: 'app-navbar',
@@ -23,6 +24,7 @@ import {
     IconSunComponent,
     IconMoonComponent,
     IconSettingsComponent,
+    ButtonComponent,
   ],
   template: `
     <header
@@ -38,16 +40,30 @@ import {
       </div>
 
       <div class="flex items-center gap-1">
-        <!-- Desktop New Chat -->
-        <button
-          (click)="createNewChat.emit()"
-          [disabled]="!hasMessages"
-          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900/50 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="New Chat"
-        >
-          <icon-plus class="w-3.5 h-3.5"></icon-plus>
-          New Chat
-        </button>
+        <!-- New Chat Button (Desktop) -->
+        <div class="flex-1 flex justify-end">
+          <app-button
+            (onClick)="createNewChat.emit()"
+            [disabled]="!hasMessages"
+            variant="primary"
+            size="sm"
+            className="max-md:hidden flex items-center gap-2"
+          >
+            <icon-plus class="w-4 h-4"></icon-plus>
+            <span>New Chat</span>
+          </app-button>
+
+          <!-- Mobile New Chat (Icon only) -->
+          <app-button
+            (onClick)="createNewChat.emit()"
+            [disabled]="!hasMessages"
+            variant="primary"
+            size="icon"
+            className="md:hidden flex items-center justify-center rounded-full w-8 h-8 p-0"
+          >
+            <icon-plus class="w-4 h-4"></icon-plus>
+          </app-button>
+        </div>
 
         <!-- Desktop History -->
         <a
@@ -57,16 +73,6 @@ import {
           <icon-history class="w-4 h-4"></icon-history>
           History
         </a>
-
-        <!-- Mobile New Chat -->
-        <button
-          (click)="createNewChat.emit()"
-          [disabled]="!hasMessages"
-          class="md:hidden ml-2 btn-icon disabled:opacity-50 disabled:cursor-not-allowed"
-          title="New Chat"
-        >
-          <icon-plus class="w-5 h-5"></icon-plus>
-        </button>
 
         <!-- Mobile History -->
         <button routerLink="/history" class="md:hidden ml-2 btn-icon" title="History">

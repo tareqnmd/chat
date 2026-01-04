@@ -5,6 +5,7 @@ import { map, Observable } from 'rxjs';
 import { ChatSession } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
 import { IconBackComponent, IconHistoryComponent, IconTrashComponent } from '../icons';
+import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
   selector: 'app-history',
@@ -15,6 +16,7 @@ import { IconBackComponent, IconHistoryComponent, IconTrashComponent } from '../
     IconHistoryComponent,
     IconTrashComponent,
     IconBackComponent,
+    ButtonComponent,
   ],
   template: `
     <div class="h-screen flex flex-col bg-white dark:bg-slate-950">
@@ -47,13 +49,10 @@ import { IconBackComponent, IconHistoryComponent, IconTrashComponent } from '../
           @if ((sessions$ | async)?.length === 0) {
             <div class="flex flex-col items-center justify-center py-20 text-slate-400">
               <icon-history class="w-16 h-16 mb-4 opacity-50"></icon-history>
-              <p class="text-lg font-medium">No chat history yet</p>
-              <button
-                routerLink="/chat/new"
-                class="mt-4 px-5 py-2 text-sm font-medium text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900 rounded-lg hover:opacity-90 transition-opacity"
-              >
+              <p class="text-lg font-medium mb-4">No chat history yet</p>
+              <app-button routerLink="/chat/new" variant="primary" size="md">
                 Start New Chat
-              </button>
+              </app-button>
             </div>
           }
 

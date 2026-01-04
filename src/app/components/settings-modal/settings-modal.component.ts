@@ -3,12 +3,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OpenaiService } from '../../core/services/openai.service';
 import { SettingsService } from '../../core/services/settings.service';
-import {
-  IconAlertComponent,
-  IconCheckComponent,
-  IconCloseComponent,
-  IconSpinnerComponent,
-} from '../icons';
+import { IconAlertComponent, IconCheckComponent, IconCloseComponent } from '../icons';
+import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
   selector: 'app-settings-modal',
@@ -17,9 +13,9 @@ import {
     CommonModule,
     FormsModule,
     IconCloseComponent,
-    IconSpinnerComponent,
     IconAlertComponent,
     IconCheckComponent,
+    ButtonComponent,
   ],
   template: `
     <div
@@ -138,31 +134,27 @@ import {
             </div>
 
             <div class="mt-2 flex justify-end">
-              <button
-                type="button"
-                (click)="verifyConnection()"
+              <app-button
+                (onClick)="verifyConnection()"
                 [disabled]="isVerifying || !apiKey"
-                class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                [loading]="isVerifying"
+                variant="secondary"
+                size="sm"
               >
-                @if (isVerifying) {
-                  <icon-spinner class="animate-spin h-3 w-3"></icon-spinner>
-                  Verifying...
+                @if (verificationStatus === 'success') {
+                  <span class="text-green-500 font-medium flex items-center gap-1">
+                    <icon-check class="w-3 h-3"></icon-check>
+                    Verified
+                  </span>
+                } @else if (verificationStatus === 'error') {
+                  <span class="text-red-500 font-medium flex items-center gap-1">
+                    <icon-close class="w-3 h-3"></icon-close>
+                    Failed
+                  </span>
                 } @else {
-                  @if (verificationStatus === 'success') {
-                    <span class="text-green-500 font-medium flex items-center gap-1">
-                      <icon-check class="w-3 h-3"></icon-check>
-                      Verified
-                    </span>
-                  } @else if (verificationStatus === 'error') {
-                    <span class="text-red-500 font-medium flex items-center gap-1">
-                      <icon-close class="w-3 h-3"></icon-close>
-                      Failed
-                    </span>
-                  } @else {
-                    <span class="flex items-center gap-1">Test Connection</span>
-                  }
+                  <span class="flex items-center gap-1">Test Connection</span>
                 }
-              </button>
+              </app-button>
             </div>
           </div>
         </div>
@@ -170,19 +162,10 @@ import {
         <div
           class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 flex-shrink-0"
         >
-          <button
-            (click)="close.emit()"
-            class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-          >
-            Cancel
-          </button>
-          <button
-            (click)="saveSettings()"
-            [disabled]="!apiKey"
-            class="px-5 py-2 text-sm font-medium text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-          >
+          <app-button (onClick)="close.emit()" variant="ghost"> Cancel </app-button>
+          <app-button (onClick)="saveSettings()" [disabled]="!apiKey" variant="primary">
             Save Changes
-          </button>
+          </app-button>
         </div>
       </div>
     </div>
