@@ -31,10 +31,10 @@ import { ButtonComponent } from '../shared/button/button.component';
     <header
       class="sticky top-0 z-10 bg-bg-app border-b border-border-fade px-4 py-3 flex items-center justify-between"
     >
-      <a routerLink="/" class="flex items-center gap-2 group transition-opacity hover:opacity-80">
-        <h1 class="text-base font-medium text-text-main">
+      <a routerLink="/" class="flex items-center gap-x-2 group transition-opacity hover:opacity-80">
+        <h1 class="flex items-baseline gap-x-1.5 text-base font-medium text-text-main">
           {{ appTitle }}
-          <span class="text-text-dim font-normal text-xs ml-1 max-sm:hidden">{{
+          <span class="text-text-dim font-normal text-xs max-sm:hidden">{{
             (settingsService.settings$ | async)?.model
           }}</span>
         </h1>

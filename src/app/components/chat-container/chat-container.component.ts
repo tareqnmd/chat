@@ -121,7 +121,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   async onSendMessage(message: string): Promise<void> {
     let activeId = this.chatService.getActiveSessionId();
     if (!activeId) {
-      activeId = this.chatService.createSession();
+      activeId = await this.chatService.createSession();
       await this.router.navigate(['chat', activeId], { replaceUrl: true });
     }
     this.chatService.sendUserMessage(message);
@@ -130,7 +130,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   async onPromptSelected(prompt: string): Promise<void> {
     let activeId = this.chatService.getActiveSessionId();
     if (!activeId) {
-      activeId = this.chatService.createSession();
+      activeId = await this.chatService.createSession();
       await this.router.navigate(['chat', activeId], { replaceUrl: true });
     }
     this.chatService.sendUserMessage(prompt);

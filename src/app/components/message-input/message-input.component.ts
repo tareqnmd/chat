@@ -16,7 +16,7 @@ import { TextareaAutoresizeDirective } from '../shared/directives/textarea-autor
     TextareaAutoresizeDirective,
   ],
   template: `
-    <div class="max-w-3xl mx-auto p-4">
+    <div class="max-w-3xl mx-auto p-4 flex flex-col gap-2">
       <div class="relative group">
         <textarea
           #textarea
@@ -42,16 +42,15 @@ import { TextareaAutoresizeDirective } from '../shared/directives/textarea-autor
           </app-button>
         </div>
       </div>
-
-      <div class="mt-2 text-right pr-2">
+      <div class="flex flex-col gap-y-1.5 px-2">
         @if (error) {
-          <p class="mb-1 text-xs text-red-500 flex justify-end items-center gap-1">
+          <div class="flex justify-end items-center gap-x-1 text-xs text-red-500">
             {{ error }}
-          </p>
+          </div>
         }
-        <p class="text-[11px] text-slate-400 dark:text-slate-500 text-center">
+        <div class="text-[11px] text-slate-400 dark:text-slate-500 text-center">
           Internal GPT can make mistakes. Consider checking important information.
-        </p>
+        </div>
       </div>
     </div>
   `,

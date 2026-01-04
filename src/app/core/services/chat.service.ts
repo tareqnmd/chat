@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { ChatSession, ChatState, Message } from '../models/message.model';
 import { OpenaiService } from './openai.service';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,41 +25,51 @@ export class ChatService {
   });
   public chatState$ = this.chatStateSubject.asObservable();
 
-  constructor(private openaiService: OpenaiService) {
-    this.loadSessionsFromStorage();
+  constructor(
+    private openaiService: OpenaiService,
+    private storageService: StorageService,
+  ) {
+    this.initStorage();
   }
 
-  private loadSessionsFromStorage(): void {
+  private async initStorage(): Promise<void> {
+    await this.storageService.init();
+    await this.loadSessionsFromStorage();
+  }
+
+  private async loadSessionsFromStorage(): Promise<void> {
+    // 1. Check for legacy localStorage data
     const storedSessions = localStorage.getItem('chat-sessions');
     let sessions: Record<string, ChatSession> = {};
 
     if (storedSessions) {
       try {
-        sessions = JSON.parse(storedSessions);
-        Object.values(sessions).forEach((session) => {
-          session.messages.forEach((msg) => (msg.timestamp = new Date(msg.timestamp)));
-        });
+        const parsedSessions: Record<string, ChatSession> = JSON.parse(storedSessions);
+        // Migrate to IndexedDB
+        for (const session of Object.values(parsedSessions)) {
+          await this.storageService.setItem(session.id, session);
+        }
+        localStorage.removeItem('chat-sessions');
       } catch (e) {
-        console.error('Failed to parse sessions', e);
+        console.error('Failed to migrate sessions from localStorage', e);
       }
     }
 
+    // 2. Check for even older legacy messages
     const legacyMessages = localStorage.getItem('chat-messages');
-    if (legacyMessages && Object.keys(sessions).length === 0) {
+    if (legacyMessages) {
       try {
-        const messages = JSON.parse(legacyMessages).map((msg: any) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp),
-        }));
+        const messages = JSON.parse(legacyMessages);
         if (messages.length > 0) {
           const newId = this.generateId();
-          sessions[newId] = {
+          const migratedSession: ChatSession = {
             id: newId,
             title: 'Migrated Chat',
             messages,
             createdAt: Date.now(),
             updatedAt: Date.now(),
           };
+          await this.storageService.setItem(newId, migratedSession);
           localStorage.removeItem('chat-messages');
         }
       } catch (e) {
@@ -66,14 +77,28 @@ export class ChatService {
       }
     }
 
-    this.sessionsSubject.next(sessions);
+    // 3. Load from IndexedDB
+    const allSessions = await this.storageService.getAll();
+    const sessionsRecord: Record<string, ChatSession> = {};
+
+    allSessions.forEach((session) => {
+      // Ensure timestamps are Date objects if they were serialized
+      session.messages.forEach((msg: any) => {
+        if (typeof msg.timestamp === 'string' || typeof msg.timestamp === 'number') {
+          msg.timestamp = new Date(msg.timestamp);
+        }
+      });
+      sessionsRecord[session.id] = session;
+    });
+
+    this.sessionsSubject.next(sessionsRecord);
   }
 
-  private saveSessions(): void {
-    localStorage.setItem('chat-sessions', JSON.stringify(this.sessionsSubject.value));
+  private async saveSession(session: ChatSession): Promise<void> {
+    await this.storageService.setItem(session.id, session);
   }
 
-  createSession(): string {
+  async createSession(): Promise<string> {
     const id = this.generateId();
     const newSession: ChatSession = {
       id,
@@ -85,7 +110,7 @@ export class ChatService {
 
     const sessions = { ...this.sessionsSubject.value, [id]: newSession };
     this.sessionsSubject.next(sessions);
-    this.saveSessions();
+    await this.saveSession(newSession);
 
     this.activateSession(id);
     return id;
@@ -119,11 +144,11 @@ export class ChatService {
     });
   }
 
-  deleteSession(id: string): void {
+  async deleteSession(id: string): Promise<void> {
     const sessions = { ...this.sessionsSubject.value };
     delete sessions[id];
     this.sessionsSubject.next(sessions);
-    this.saveSessions();
+    await this.storageService.removeItem(id);
 
     if (this.activeSessionIdSubject.value === id) {
       this.activeSessionIdSubject.next(null);
@@ -139,7 +164,7 @@ export class ChatService {
     const activeId = this.activeSessionIdSubject.value;
     if (!activeId) return;
 
-    this.addMessageToSession(activeId, {
+    await this.addMessageToSession(activeId, {
       id: this.generateId(),
       content,
       role: 'user',
@@ -148,7 +173,10 @@ export class ChatService {
 
     const session = this.sessionsSubject.value[activeId];
     if (session.messages.length === 1) {
-      this.updateSessionTitle(activeId, content.slice(0, 30) + (content.length > 30 ? '...' : ''));
+      await this.updateSessionTitle(
+        activeId,
+        content.slice(0, 30) + (content.length > 30 ? '...' : ''),
+      );
     }
 
     this.chatStateSubject.next({
@@ -193,7 +221,7 @@ export class ChatService {
         });
       });
 
-      this.addMessageToSession(activeId, {
+      await this.addMessageToSession(activeId, {
         id: this.generateId(),
         content: fullResponse,
         role: 'assistant',
@@ -214,7 +242,7 @@ export class ChatService {
     }
   }
 
-  private addMessageToSession(sessionId: string, message: Message): void {
+  private async addMessageToSession(sessionId: string, message: Message): Promise<void> {
     const sessions = { ...this.sessionsSubject.value };
     if (sessions[sessionId]) {
       sessions[sessionId] = {
@@ -223,7 +251,7 @@ export class ChatService {
         updatedAt: Date.now(),
       };
       this.sessionsSubject.next(sessions);
-      this.saveSessions();
+      await this.saveSession(sessions[sessionId]);
 
       if (this.activeSessionIdSubject.value === sessionId) {
         this.chatStateSubject.next({
@@ -235,22 +263,22 @@ export class ChatService {
     }
   }
 
-  updateSessionTitle(sessionId: string, title: string): void {
+  async updateSessionTitle(sessionId: string, title: string): Promise<void> {
     const sessions = { ...this.sessionsSubject.value };
     if (sessions[sessionId]) {
       sessions[sessionId] = { ...sessions[sessionId], title };
       this.sessionsSubject.next(sessions);
-      this.saveSessions();
+      await this.saveSession(sessions[sessionId]);
     }
   }
 
-  clearMessages(): void {
+  async clearMessages(): Promise<void> {
     const activeId = this.activeSessionIdSubject.value;
     if (activeId) {
       const sessions = { ...this.sessionsSubject.value };
       sessions[activeId].messages = [];
       this.sessionsSubject.next(sessions);
-      this.saveSessions();
+      await this.saveSession(sessions[activeId]);
 
       this.chatStateSubject.next({
         messages: [],

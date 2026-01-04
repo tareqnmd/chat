@@ -36,9 +36,9 @@ import { ButtonComponent } from '../shared/button/button.component';
           </button>
         </div>
 
-        <div class="p-6 space-y-5 overflow-y-auto">
-          <div>
-            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+        <div class="p-6 flex flex-col gap-y-5 overflow-y-auto">
+          <div class="flex flex-col gap-y-2">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
               API Key <span class="text-red-500">*</span>
             </label>
             <div class="relative">
@@ -81,20 +81,22 @@ import { ButtonComponent } from '../shared/button/button.component';
               </button>
             </div>
             @if (!apiKey) {
-              <p class="mt-1 text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1">
+              <div
+                class="mt-1 text-xs text-amber-600 dark:text-amber-500 flex items-center gap-x-1"
+              >
                 <icon-alert class="w-3 h-3"></icon-alert>
                 Key is required
-              </p>
+              </div>
             }
           </div>
 
-          <div class="border-t border-slate-100 dark:border-slate-800 pt-5">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          <div class="border-t border-slate-100 dark:border-slate-800 pt-5 flex flex-col gap-y-4">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Model Configuration
             </h3>
 
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            <div class="flex flex-col gap-y-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
                 >Provider</label
               >
               <select
@@ -107,8 +109,8 @@ import { ButtonComponent } from '../shared/button/button.component';
               </select>
             </div>
 
-            <div class="mb-4">
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            <div class="flex flex-col gap-y-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
                 >Base URL</label
               >
               <input
@@ -118,11 +120,11 @@ import { ButtonComponent } from '../shared/button/button.component';
                 [class.opacity-50]="provider === 'openai'"
                 class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-mono"
               />
-              <p class="mt-1 text-xs text-slate-500">APIs compatible with OpenAI structure.</p>
+              <div class="mt-1 text-xs text-slate-500">APIs compatible with OpenAI structure.</div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            <div class="flex flex-col gap-y-2">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300"
                 >Model Name</label
               >
               <input
@@ -133,7 +135,7 @@ import { ButtonComponent } from '../shared/button/button.component';
               />
             </div>
 
-            <div class="mt-2 flex justify-end">
+            <div class="flex justify-end">
               <app-button
                 (onClick)="verifyConnection()"
                 [disabled]="isVerifying || !apiKey"
@@ -142,17 +144,17 @@ import { ButtonComponent } from '../shared/button/button.component';
                 size="sm"
               >
                 @if (verificationStatus === 'success') {
-                  <span class="text-green-500 font-medium flex items-center gap-1">
+                  <span class="text-green-500 font-medium flex items-center gap-x-1">
                     <icon-check class="w-3 h-3"></icon-check>
                     Verified
                   </span>
                 } @else if (verificationStatus === 'error') {
-                  <span class="text-red-500 font-medium flex items-center gap-1">
+                  <span class="text-red-500 font-medium flex items-center gap-x-1">
                     <icon-close class="w-3 h-3"></icon-close>
                     Failed
                   </span>
                 } @else {
-                  <span class="flex items-center gap-1">Test Connection</span>
+                  <span class="flex items-center gap-x-1">Test Connection</span>
                 }
               </app-button>
             </div>

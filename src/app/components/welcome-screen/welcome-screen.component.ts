@@ -7,18 +7,26 @@ import { IconBotComponent } from '../icons';
   standalone: true,
   imports: [CommonModule, IconBotComponent],
   template: `
-    <div class="w-full flex flex-col items-center justify-center p-4 text-center">
-      <div
-        class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-sm"
-      >
-        <icon-bot class="w-8 h-8 text-slate-700 dark:text-slate-200"></icon-bot>
+    <div
+      class="w-full min-h-full flex flex-col items-center justify-center p-4 text-center gap-y-8"
+    >
+      <div class="flex flex-col items-center gap-y-6">
+        <div
+          class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm"
+        >
+          <icon-bot class="w-8 h-8 text-slate-700 dark:text-slate-200"></icon-bot>
+        </div>
+
+        <div class="flex flex-col items-center gap-y-2">
+          <h2 class="text-2xl font-semibold text-slate-800 dark:text-slate-100">
+            How can I help you today?
+          </h2>
+          <p class="text-slate-500 dark:text-slate-400 max-w-md">
+            I can help you write code, analyze data, or answer questions.
+          </p>
+        </div>
       </div>
-      <h2 class="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-2">
-        How can I help you today?
-      </h2>
-      <p class="text-slate-500 dark:text-slate-400 max-w-md mb-8">
-        I can help you write code, analyze data, or answer questions.
-      </p>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
         @for (prompt of suggestedPrompts; track prompt) {
           <button
