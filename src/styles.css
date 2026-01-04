@@ -2,6 +2,18 @@
 @variant dark (&:where(.dark, .dark *));
 
 :root {
+  --color-app-bg: #f8fafc;
+  --color-app-surface: #ffffff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748b;
+  --color-border-main: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-primary-main: #0f172a;
+  --color-primary-hover: #1e293b;
+}
+
+.dark {
   --color-app-bg: #020617;
   --color-app-surface: #0f172a;
   --color-text-primary: #f8fafc;
@@ -21,9 +33,7 @@
   --color-text-dim: var(--color-text-muted);
   --color-border-strong: var(--color-border-main);
   --color-border-fade: var(--color-border-subtle);
-
   --font-sans: 'Inter', system-ui, sans-serif;
-
   --animate-fade-in: fadeIn 0.3s ease-in-out;
   --animate-slide-up: slideUp 0.3s ease-out;
   --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
