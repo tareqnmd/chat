@@ -20,7 +20,6 @@ import { MetaService } from './core/services/meta.service';
     NgxSonnerToaster,
   ],
   templateUrl: './app.html',
-  styleUrl: './app.css',
 })
 export class App implements OnInit {
   showSettings = false;
