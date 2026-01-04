@@ -39,8 +39,7 @@ import { ButtonComponent } from '../shared/button/button.component';
         </h1>
       </div>
 
-      <div class="flex items-center gap-1">
-        <!-- New Chat Button (Desktop) -->
+      <div class="flex items-center gap-2">
         <div class="flex-1 flex justify-end">
           <app-button
             (onClick)="createNewChat.emit()"
@@ -53,7 +52,6 @@ import { ButtonComponent } from '../shared/button/button.component';
             <span>New Chat</span>
           </app-button>
 
-          <!-- Mobile New Chat (Icon only) -->
           <app-button
             (onClick)="createNewChat.emit()"
             [disabled]="!hasMessages"
@@ -65,36 +63,33 @@ import { ButtonComponent } from '../shared/button/button.component';
           </app-button>
         </div>
 
-        <!-- Desktop History -->
         <a
           routerLink="/history"
           class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mr-1"
         >
-          <icon-history class="w-4 h-4"></icon-history>
-          History
+          <icon-history class="w-6 h-6"></icon-history>
         </a>
 
-        <!-- Mobile History -->
-        <button routerLink="/history" class="md:hidden ml-2 btn-icon" title="History">
-          <icon-history class="w-5 h-5"></icon-history>
+        <button routerLink="/history" class="md:hidden btn-icon" title="History">
+          <icon-history class="w-6 h-6"></icon-history>
         </button>
 
         @if (hasMessages) {
           <button (click)="clearChat.emit()" class="btn-icon" title="Clear Chat">
-            <icon-trash class="w-5 h-5"></icon-trash>
+            <icon-trash class="w-6 h-6"></icon-trash>
           </button>
         }
 
         <button (click)="toggleDarkMode()" class="btn-icon" title="Toggle Theme">
           @if (settingsService.isDarkMode$ | async) {
-            <icon-sun class="w-5 h-5"></icon-sun>
+            <icon-sun class="w-6 h-6"></icon-sun>
           } @else {
-            <icon-moon class="w-5 h-5"></icon-moon>
+            <icon-moon class="w-6 h-6"></icon-moon>
           }
         </button>
 
         <button (click)="openSettings.emit()" class="btn-icon" title="Settings">
-          <icon-settings class="w-5 h-5"></icon-settings>
+          <icon-settings class="w-6 h-6"></icon-settings>
         </button>
       </div>
     </header>

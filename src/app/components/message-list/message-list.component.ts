@@ -8,7 +8,7 @@ import { IconBotComponent, IconUserComponent } from '../icons';
   standalone: true,
   imports: [CommonModule, IconUserComponent, IconBotComponent],
   template: `
-    <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6" #messageContainer>
+    <div class="p-4 md:p-6 space-y-6" #messageContainer>
       @for (message of messages; track message.id) {
         <div
           class="group w-full text-slate-800 dark:text-slate-100 border-b border-black/5 dark:border-white/5 pb-6 last:border-0"

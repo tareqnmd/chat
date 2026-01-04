@@ -7,7 +7,7 @@ import { IconBotComponent } from '../icons';
   standalone: true,
   imports: [CommonModule, IconBotComponent],
   template: `
-    <div class="flex-1 flex flex-col items-center justify-center p-4 text-center mt-[-10vh]">
+    <div class="w-full flex flex-col items-center justify-center p-4 text-center">
       <div
         class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-sm"
       >

@@ -40,8 +40,10 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
       [richColors]="true"
     ></ngx-sonner-toaster>
 
-    <div class="h-screen flex flex-col bg-white dark:bg-slate-950">
+    <div class="h-screen flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
+      <!-- Sticky Header -->
       <app-navbar
+        class="flex-shrink-0"
         [hasMessages]="chatState.messages.length > 0"
         (openSettings)="showSettings = true"
         (clearChat)="clearChat()"
@@ -51,29 +53,37 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
       @if (showSettings) {
         <app-settings-modal (close)="showSettings = false"></app-settings-modal>
       }
-      <div class="flex-1 flex flex-col overflow-hidden relative">
-        <div class="flex-1 relative overflow-hidden">
-          @if (chatState.messages.length === 0) {
-            <div class="absolute inset-0 z-0">
-              <app-welcome-screen (promptSelected)="onPromptSelected($event)"></app-welcome-screen>
-            </div>
-          }
 
-          @if (chatState.messages.length > 0) {
-            <div class="h-full relative z-10">
-              <div class="h-full max-w-3xl mx-auto w-full">
-                <app-message-list [messages]="chatState.messages" #messageList> </app-message-list>
+      <!-- Main Scrollable Area -->
+      <div class="flex-1 overflow-y-auto w-full">
+        <div class="min-h-full flex flex-col">
+          @if (chatState.messages.length === 0) {
+            <!-- Centered Welcome Screen -->
+            <div class="flex-1 flex flex-col items-center justify-center p-6 w-full">
+              <div class="w-full max-w-3xl animate-slide-up">
+                <app-welcome-screen
+                  (promptSelected)="onPromptSelected($event)"
+                ></app-welcome-screen>
               </div>
+            </div>
+          } @else {
+            <!-- Chat Message List -->
+            <div class="max-w-3xl mx-auto w-full pb-4">
+              <app-message-list [messages]="chatState.messages" #messageList></app-message-list>
             </div>
           }
         </div>
+      </div>
 
+      <!-- Sticky Footer -->
+      <div
+        class="flex-shrink-0 border-t border-slate-100 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"
+      >
         <app-message-input
           [isLoading]="chatState.isLoading"
           [error]="chatState.error"
           (sendMessage)="onSendMessage($event)"
-        >
-        </app-message-input>
+        ></app-message-input>
       </div>
     </div>
   `,

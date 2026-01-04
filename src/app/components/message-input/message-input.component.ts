@@ -30,8 +30,9 @@ import { TextareaAutoresizeDirective } from '../shared/directives/textarea-autor
           class="w-full pl-5 pr-14 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-slate-700/50 resize-none overflow-hidden text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
         ></textarea>
 
-        <div class="absolute right-2 top-1/2 -translate-y-1/2">
+        <div class="absolute right-4 top-1/2 -translate-y-1/2">
           <app-button
+            className="!p-0"
             variant="icon"
             size="icon"
             (onClick)="onSend()"
