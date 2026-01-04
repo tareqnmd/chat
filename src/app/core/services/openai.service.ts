@@ -26,10 +26,7 @@ export class OpenaiService {
     if (baseUrl.endsWith('/')) {
       baseUrl = baseUrl.slice(0, -1);
     }
-    // Handle cases where user might pasting full URL or base
-    // Standard convention: Base URL is `https://api.openai.com/v1`
-    // Endpoint is `/chat/completions`
-    // If user puts full path, use it? No, safer to assume standard structure for "compatible" APIs
+
     return `${baseUrl}/chat/completions`;
   }
 
@@ -108,9 +105,7 @@ export class OpenaiService {
               if (content) {
                 onChunk(content);
               }
-            } catch (e) {
-              // Skip invalid JSON
-            }
+            } catch (e) {}
           }
         }
       }

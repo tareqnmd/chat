@@ -35,7 +35,7 @@ export class SettingsService {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        // Ensure defaults for new fields
+
         return {
           apiKey: parsed.apiKey || null,
           provider: parsed.provider || 'openai',

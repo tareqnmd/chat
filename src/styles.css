@@ -53,7 +53,6 @@
 
 @layer base {
   body {
-    /* Minimalist design: light/dark solid background */
     @apply bg-white dark:bg-slate-950;
     @apply text-slate-800 dark:text-slate-200;
     @apply font-sans antialiased;
@@ -67,7 +66,6 @@
   }
 
   .glass-card {
-    /* Kept for some legacy components, but simplified */
     @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800;
   }
 }

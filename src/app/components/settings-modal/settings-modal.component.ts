@@ -204,7 +204,6 @@ export class SettingsModalComponent {
     if (this.provider === 'openai') {
       this.baseUrl = 'https://api.openai.com/v1';
     } else {
-      // Allow user to edit, maybe clear or keep current
     }
   }
 

@@ -24,7 +24,7 @@ export class ChatService {
     if (stored) {
       try {
         const messages = JSON.parse(stored);
-        // Convert timestamp strings back to Date objects
+
         const parsedMessages = messages.map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp),
@@ -62,10 +62,8 @@ export class ChatService {
   }
 
   async sendUserMessage(content: string): Promise<void> {
-    // Add user message
     this.addMessage(content, 'user');
 
-    // Set loading state
     this.chatStateSubject.next({
       ...this.chatStateSubject.value,
       isLoading: true,
@@ -73,13 +71,11 @@ export class ChatService {
     });
 
     try {
-      // Prepare messages for OpenAI
       const messages = this.chatStateSubject.value.messages.map((msg) => ({
         role: msg.role,
         content: msg.content,
       }));
 
-      // Add typing indicator
       const typingMessage: Message = {
         id: 'typing',
         content: '',
@@ -93,12 +89,10 @@ export class ChatService {
         messages: [...this.chatStateSubject.value.messages, typingMessage],
       });
 
-      // Get response from OpenAI with streaming
       let fullResponse = '';
       await this.openaiService.sendMessageStream(messages, (chunk) => {
         fullResponse += chunk;
 
-        // Update the typing message with accumulated content
         const currentMessages = this.chatStateSubject.value.messages;
         const updatedMessages = currentMessages.map((msg) =>
           msg.id === 'typing' ? { ...msg, content: fullResponse } : msg,
@@ -110,7 +104,6 @@ export class ChatService {
         });
       });
 
-      // Remove typing indicator and add final message
       const messagesWithoutTyping = this.chatStateSubject.value.messages.filter(
         (msg) => msg.id !== 'typing',
       );
@@ -130,7 +123,6 @@ export class ChatService {
 
       this.saveMessagesToStorage();
     } catch (error: any) {
-      // Remove typing indicator
       const messagesWithoutTyping = this.chatStateSubject.value.messages.filter(
         (msg) => msg.id !== 'typing',
       );

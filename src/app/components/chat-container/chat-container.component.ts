@@ -196,11 +196,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
 
   constructor(
     private chatService: ChatService,
-    private settingsService: SettingsService, // Injected now
+    private settingsService: SettingsService,
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to chat state
     this.chatService.chatState$.pipe(takeUntil(this.destroy$)).subscribe((state) => {
       const previousMessageCount = this.chatState.messages.length;
       this.chatState = state;
@@ -209,13 +208,11 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
         toast.error(state.error);
       }
 
-      // Scroll to bottom when new messages arrive
       if (state.messages.length > previousMessageCount) {
         this.shouldScrollToBottom = true;
       }
     });
 
-    // Subscribe to theme state
     this.settingsService.isDarkMode$.pipe(takeUntil(this.destroy$)).subscribe((isDark) => {
       this.isDarkMode = isDark;
     });
@@ -254,8 +251,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   reloadPage(): void {
     window.location.reload();
   }
-
-  // Removed private applyDarkMode() - handled by Service
 
   private scrollToBottom(): void {
     try {
