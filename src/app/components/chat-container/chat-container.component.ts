@@ -11,6 +11,7 @@ import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { Subject, takeUntil } from 'rxjs';
 import { ChatState } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
+import { SettingsService } from '../../core/services/settings.service';
 import { MessageInputComponent } from '../message-input/message-input.component';
 import { MessageListComponent } from '../message-list/message-list.component';
 import { SettingsModalComponent } from '../settings-modal/settings-modal.component';
@@ -193,7 +194,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   private destroy$ = new Subject<void>();
   private shouldScrollToBottom = false;
 
-  constructor(private chatService: ChatService) {}
+  constructor(
+    private chatService: ChatService,
+    private settingsService: SettingsService, // Injected now
+  ) {}
 
   ngOnInit(): void {
     // Subscribe to chat state
@@ -211,12 +215,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
       }
     });
 
-    // Check for dark mode preference
-    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (!localStorage.getItem('darkMode')) {
-      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    this.applyDarkMode();
+    // Subscribe to theme state
+    this.settingsService.isDarkMode$.pipe(takeUntil(this.destroy$)).subscribe((isDark) => {
+      this.isDarkMode = isDark;
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -244,22 +246,16 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   toggleDarkMode(): void {
-    this.isDarkMode = !this.isDarkMode;
-    localStorage.setItem('darkMode', this.isDarkMode.toString());
-    this.applyDarkMode();
+    const currentTheme = this.settingsService.getSettings().theme;
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    this.settingsService.saveSettings({ theme: newTheme });
   }
 
   reloadPage(): void {
     window.location.reload();
   }
 
-  private applyDarkMode(): void {
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }
+  // Removed private applyDarkMode() - handled by Service
 
   private scrollToBottom(): void {
     try {
