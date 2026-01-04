@@ -82,24 +82,24 @@ interface ContentBlock {
                   }
 
                   @if (message.isTyping) {
-                    <div class="flex flex-col gap-y-2">
+                    <div class="flex flex-col gap-y-4 w-full">
                       @if (message.content) {
                         <p class="whitespace-pre-wrap">{{ message.content }}</p>
-                      }
-                      @if (!message.content) {
-                        <div class="flex gap-x-1.5 py-4">
+                        <div class="flex gap-x-1.5 py-1">
                           <div
-                            class="w-2.5 h-2.5 bg-primary-main/30 rounded-full animate-bounce"
-                            style="animation-delay: 100ms"
+                            class="w-1.5 h-1.5 bg-primary-main/40 rounded-full animate-pulse"
                           ></div>
                           <div
-                            class="w-2.5 h-2.5 bg-primary-main/50 rounded-full animate-bounce"
+                            class="w-1.5 h-1.5 bg-primary-main/40 rounded-full animate-pulse"
                             style="animation-delay: 200ms"
                           ></div>
-                          <div
-                            class="w-2.5 h-2.5 bg-primary-main/70 rounded-full animate-bounce"
-                            style="animation-delay: 300ms"
-                          ></div>
+                        </div>
+                      } @else {
+                        <!-- Skeleton Loading -->
+                        <div class="space-y-3 w-full max-w-md animate-pulse">
+                          <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-3/4"></div>
+                          <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-1/2"></div>
+                          <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded-full w-5/6"></div>
                         </div>
                       }
                     </div>

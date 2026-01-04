@@ -28,7 +28,51 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
       <!-- Main Scrollable Area -->
       <div class="flex-1 overflow-y-auto w-full">
         <div class="min-h-full flex flex-col">
-          @if (chatState.messages.length === 0) {
+          @if (chatState.isInitialLoading) {
+            <div class="flex-1 flex items-center justify-center p-6 w-full">
+              <div class="flex flex-col items-center gap-y-4 animate-pulse">
+                <div
+                  class="w-12 h-12 border-4 border-primary-main/20 border-t-primary-main rounded-full animate-spin"
+                ></div>
+                <span class="text-sm text-text-sub font-medium">Loading chat...</span>
+              </div>
+            </div>
+          } @else if (chatState.error === 'Chat not found') {
+            <div class="flex-1 flex flex-col items-center justify-center p-6 w-full">
+              <div class="w-full max-w-md p-8 text-center animate-slide-up">
+                <div
+                  class="mb-6 inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 text-red-500"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                  Chat Not Found
+                </h2>
+                <p class="text-slate-500 dark:text-slate-400 mb-8">
+                  This conversation might have been deleted or never existed.
+                </p>
+                <button
+                  (click)="onNewChat()"
+                  class="px-6 py-2.5 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-full font-medium transition-all hover:opacity-90 active:scale-95 shadow-sm"
+                >
+                  Start New Chat
+                </button>
+              </div>
+            </div>
+          } @else if (chatState.messages.length === 0) {
             <!-- Centered Welcome Screen -->
             <div class="flex-1 flex flex-col items-center justify-center p-6 w-full">
               <div class="w-full max-w-3xl animate-slide-up">
@@ -64,6 +108,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   chatState: ChatState = {
     messages: [],
     isLoading: false,
+    isInitialLoading: true,
     error: null,
   };
 

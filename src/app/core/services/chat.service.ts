@@ -17,6 +17,9 @@ export class ChatService {
   private pendingDeleteIdSubject = new BehaviorSubject<string | null>(null);
   public pendingDeleteId$ = this.pendingDeleteIdSubject.asObservable();
 
+  private isInitializedSubject = new BehaviorSubject<boolean>(false);
+  public isInitialized$ = this.isInitializedSubject.asObservable();
+
   setPendingDeleteId(id: string | null): void {
     this.pendingDeleteIdSubject.next(id);
   }
@@ -32,6 +35,7 @@ export class ChatService {
   private chatStateSubject = new BehaviorSubject<ChatState>({
     messages: [],
     isLoading: false,
+    isInitialLoading: true,
     error: null,
   });
   public chatState$ = this.chatStateSubject.asObservable();
@@ -49,60 +53,88 @@ export class ChatService {
   }
 
   private async loadSessionsFromStorage(): Promise<void> {
-    // 1. Check for legacy localStorage data
-    const storedSessions = localStorage.getItem('chat-sessions');
-    let sessions: Record<string, ChatSession> = {};
+    try {
+      // 1. Check for legacy localStorage data
+      const storedSessions = localStorage.getItem('chat-sessions');
 
-    if (storedSessions) {
-      try {
-        const parsedSessions: Record<string, ChatSession> = JSON.parse(storedSessions);
-        // Migrate to IndexedDB
-        for (const session of Object.values(parsedSessions)) {
-          await this.storageService.setItem(session.id, session);
+      if (storedSessions) {
+        try {
+          const parsedSessions: Record<string, ChatSession> = JSON.parse(storedSessions);
+          // Migrate to IndexedDB
+          for (const session of Object.values(parsedSessions)) {
+            await this.storageService.setItem(session.id, session);
+          }
+          localStorage.removeItem('chat-sessions');
+        } catch (e) {
+          console.error('Failed to migrate sessions from localStorage', e);
         }
-        localStorage.removeItem('chat-sessions');
-      } catch (e) {
-        console.error('Failed to migrate sessions from localStorage', e);
       }
-    }
 
-    // 2. Check for even older legacy messages
-    const legacyMessages = localStorage.getItem('chat-messages');
-    if (legacyMessages) {
-      try {
-        const messages = JSON.parse(legacyMessages);
-        if (messages.length > 0) {
-          const newId = this.generateId();
-          const migratedSession: ChatSession = {
-            id: newId,
-            title: 'Migrated Chat',
-            messages,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-          };
-          await this.storageService.setItem(newId, migratedSession);
-          localStorage.removeItem('chat-messages');
+      // 2. Check for even older legacy messages
+      const legacyMessages = localStorage.getItem('chat-messages');
+      if (legacyMessages) {
+        try {
+          const messages = JSON.parse(legacyMessages);
+          if (messages.length > 0) {
+            const newId = this.generateId();
+            const migratedSession: ChatSession = {
+              id: newId,
+              title: 'Migrated Chat',
+              messages,
+              createdAt: Date.now(),
+              updatedAt: Date.now(),
+            };
+            await this.storageService.setItem(newId, migratedSession);
+            localStorage.removeItem('chat-messages');
+          }
+        } catch (e) {
+          console.error('Failed to migrate legacy messages', e);
         }
-      } catch (e) {
-        console.error('Failed to migrate legacy messages', e);
       }
-    }
 
-    // 3. Load from IndexedDB
-    const allSessions = await this.storageService.getAll();
-    const sessionsRecord: Record<string, ChatSession> = {};
+      // 3. Load from IndexedDB
+      const allSessions = await this.storageService.getAll();
+      const sessionsRecord: Record<string, ChatSession> = {};
 
-    allSessions.forEach((session) => {
-      // Ensure timestamps are Date objects if they were serialized
-      session.messages.forEach((msg: any) => {
-        if (typeof msg.timestamp === 'string' || typeof msg.timestamp === 'number') {
-          msg.timestamp = new Date(msg.timestamp);
-        }
+      allSessions.forEach((session) => {
+        // Ensure timestamps are Date objects if they were serialized
+        session.messages.forEach((msg: any) => {
+          if (typeof msg.timestamp === 'string' || typeof msg.timestamp === 'number') {
+            msg.timestamp = new Date(msg.timestamp);
+          }
+        });
+        sessionsRecord[session.id] = session;
       });
-      sessionsRecord[session.id] = session;
-    });
 
-    this.sessionsSubject.next(sessionsRecord);
+      this.sessionsSubject.next(sessionsRecord);
+      this.isInitializedSubject.next(true);
+
+      // If there was an intended session to activate during initialization, do it now
+      const currentActiveId = this.activeSessionIdSubject.value;
+      if (currentActiveId && sessionsRecord[currentActiveId]) {
+        this.activateSession(currentActiveId);
+      } else if (currentActiveId && !sessionsRecord[currentActiveId]) {
+        // Actually not found after initialization
+        this.chatStateSubject.next({
+          ...this.chatStateSubject.value,
+          isInitialLoading: false,
+          error: 'Chat not found',
+        });
+      } else {
+        this.chatStateSubject.next({
+          ...this.chatStateSubject.value,
+          isInitialLoading: false,
+        });
+      }
+    } catch (error: any) {
+      console.error('Initialization failed', error);
+      this.isInitializedSubject.next(true); // Signal "done" anyway to unlock UI
+      this.chatStateSubject.next({
+        ...this.chatStateSubject.value,
+        isInitialLoading: false,
+        error: 'Failed to load chat history. Please refresh.',
+      });
+    }
   }
 
   private async saveSession(session: ChatSession): Promise<void> {
@@ -128,19 +160,36 @@ export class ChatService {
   }
 
   activateSession(id: string): void {
+    const isInitialized = this.isInitializedSubject.value;
+
+    if (!isInitialized) {
+      // Just set the intended ID, loadSessionsFromStorage will handle it once ready
+      this.activeSessionIdSubject.next(id);
+      return;
+    }
+
     const sessions = this.sessionsSubject.value;
     if (sessions[id]) {
+      // If we are already in this session, don't reset everything (prevents flicker)
+      const isAlreadyActive = this.activeSessionIdSubject.value === id;
+      const isInitialLoading = this.chatStateSubject.value.isInitialLoading;
+
       this.activeSessionIdSubject.next(id);
-      this.chatStateSubject.next({
-        messages: sessions[id].messages,
-        isLoading: false,
-        error: null,
-      });
+
+      if (!isAlreadyActive || isInitialLoading) {
+        this.chatStateSubject.next({
+          messages: sessions[id].messages,
+          isLoading: false,
+          isInitialLoading: false,
+          error: null,
+        });
+      }
     } else {
       this.activeSessionIdSubject.next(null);
       this.chatStateSubject.next({
         messages: [],
         isLoading: false,
+        isInitialLoading: false,
         error: 'Chat not found',
       });
     }
@@ -151,6 +200,7 @@ export class ChatService {
     this.chatStateSubject.next({
       messages: [],
       isLoading: false,
+      isInitialLoading: this.chatStateSubject.value.isInitialLoading,
       error: null,
     });
   }
@@ -166,6 +216,7 @@ export class ChatService {
       this.chatStateSubject.next({
         messages: [],
         isLoading: false,
+        isInitialLoading: false,
         error: null,
       });
     }
@@ -237,9 +288,11 @@ export class ChatService {
         timestamp: new Date(),
       });
 
+      const finalSession = this.sessionsSubject.value[activeId];
       this.chatStateSubject.next({
-        messages: this.sessionsSubject.value[activeId].messages,
+        messages: finalSession ? finalSession.messages : [],
         isLoading: false,
+        isInitialLoading: false,
         error: null,
       });
     } catch (error: any) {
@@ -266,6 +319,7 @@ export class ChatService {
         this.chatStateSubject.next({
           messages: sessions[sessionId].messages,
           isLoading: this.chatStateSubject.value.isLoading,
+          isInitialLoading: false,
           error: this.chatStateSubject.value.error,
         });
       }
@@ -292,6 +346,7 @@ export class ChatService {
       this.chatStateSubject.next({
         messages: [],
         isLoading: false,
+        isInitialLoading: false,
         error: null,
       });
     }

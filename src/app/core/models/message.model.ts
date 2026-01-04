@@ -15,6 +15,7 @@ export interface Message {
 export interface ChatState {
   messages: Message[];
   isLoading: boolean;
+  isInitialLoading: boolean;
   error: string | null;
 }
 
