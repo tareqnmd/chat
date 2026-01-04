@@ -13,8 +13,8 @@ import { SettingsService } from '../../core/services/settings.service';
     >
       <div class="flex items-center gap-2 cursor-pointer" (click)="reloadPage()">
         <h1 class="text-base font-medium text-slate-700 dark:text-slate-200">
-          Internal GPT
-          <span class="text-slate-400 font-normal text-xs ml-1">{{
+          Chat
+          <span class="text-slate-400 font-normal text-xs ml-1 max-sm:hidden">{{
             (settingsService.settings$ | async)?.model
           }}</span>
         </h1>
