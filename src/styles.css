@@ -4,25 +4,21 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950;
-    @apply text-slate-900 dark:text-slate-100;
-    @apply font-sans;
+    /* Minimalist design: light/dark solid background */
+    @apply bg-white dark:bg-slate-950;
+    @apply text-slate-800 dark:text-slate-200;
+    @apply font-sans antialiased;
     @apply min-h-screen;
   }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/70 dark:bg-slate-900/70;
-    @apply backdrop-blur-xl backdrop-saturate-150;
-    @apply border border-white/20 dark:border-slate-700/50;
-    @apply shadow-xl shadow-black/5;
+  .btn-icon {
+    @apply p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors;
   }
 
-  .glass-strong {
-    @apply bg-white/90 dark:bg-slate-900/90;
-    @apply backdrop-blur-2xl backdrop-saturate-200;
-    @apply border border-white/30 dark:border-slate-700/70;
-    @apply shadow-2xl shadow-black/10;
+  .glass-card {
+    /* Kept for some legacy components, but simplified */
+    @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800;
   }
 }

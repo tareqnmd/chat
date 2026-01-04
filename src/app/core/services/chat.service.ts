@@ -101,7 +101,7 @@ export class ChatService {
         // Update the typing message with accumulated content
         const currentMessages = this.chatStateSubject.value.messages;
         const updatedMessages = currentMessages.map((msg) =>
-          msg.id === 'typing' ? { ...msg, content: fullResponse } : msg
+          msg.id === 'typing' ? { ...msg, content: fullResponse } : msg,
         );
 
         this.chatStateSubject.next({
@@ -112,7 +112,7 @@ export class ChatService {
 
       // Remove typing indicator and add final message
       const messagesWithoutTyping = this.chatStateSubject.value.messages.filter(
-        (msg) => msg.id !== 'typing'
+        (msg) => msg.id !== 'typing',
       );
 
       const finalMessage: Message = {
@@ -132,7 +132,7 @@ export class ChatService {
     } catch (error: any) {
       // Remove typing indicator
       const messagesWithoutTyping = this.chatStateSubject.value.messages.filter(
-        (msg) => msg.id !== 'typing'
+        (msg) => msg.id !== 'typing',
       );
 
       this.chatStateSubject.next({

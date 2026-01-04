@@ -1,24 +1,32 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../../environments/environment.development';
 import { OpenAIMessage } from '../models/message.model';
+import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OpenaiService {
-  private apiKey = environment.openaiApiKey;
   private apiUrl = 'https://api.openai.com/v1/chat/completions';
 
-  constructor() {}
+  constructor(private settingsService: SettingsService) {}
+
+  private getHeaders(): HeadersInit {
+    const apiKey = this.settingsService.getApiKey() || environment.openaiApiKey;
+    if (!apiKey) {
+      throw new Error('API Key is missing. Please add it in Settings.');
+    }
+    return {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    };
+  }
 
   async sendMessage(messages: OpenAIMessage[]): Promise<string> {
     try {
       const response = await fetch(this.apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
-        },
+        headers: this.getHeaders(),
         body: JSON.stringify({
           model: 'gpt-3.5-turbo',
           messages: messages,
@@ -42,15 +50,12 @@ export class OpenaiService {
 
   async sendMessageStream(
     messages: OpenAIMessage[],
-    onChunk: (chunk: string) => void
+    onChunk: (chunk: string) => void,
   ): Promise<void> {
     try {
       const response = await fetch(this.apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
-        },
+        headers: this.getHeaders(),
         body: JSON.stringify({
           model: 'gpt-3.5-turbo',
           messages: messages,
