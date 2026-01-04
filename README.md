@@ -1,59 +1,80 @@
-# ChatBot
+# Internal GPT - Minimalist AI Chat Interface
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+A modern, privacy-focused AI chat application built with **Angular (v21)** and **Tailwind CSS (v4)**. Designed for simplicity, aesthetics, and flexibility, allowing you to connect with any OpenAI-compatible API (like OpenAI, DeepSeek, Groq, or LocalAI).
 
-## Development server
+![Internal GPT Interface](file:///home/tareq/.gemini/antigravity/brain/09af3a2a-a6a8-4b59-8f39-f27903fbe5c0/app_hero_welcome_1767517894251.png)
+_(Welcome Screen)_
 
-To start a local development server, run:
+![Chat Interface](file:///home/tareq/.gemini/antigravity/brain/09af3a2a-a6a8-4b59-8f39-f27903fbe5c0/app_main_interface_1767517911338.png)
+_(Active Chat Interface)_
 
-```bash
-ng serve
-```
+## ✨ Features
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Minimalist Design**: Clean, distraction-free UI inspired by modern chat interfaces.
+- **Dynamic AI Provider**: Switch seamlessly between OpenAI and custom/compatible providers (e.g., DeepSeek, LocalAI) by configuring the Base URL.
+- **Private & Secure**: API keys and settings are stored locally in your browser (`localStorage`). No backend tracking.
+- **Customizable**: Toggle between Light and Dark modes.
+- **Responsive**: Fully optimized for desktop and mobile.
+- **Toast Notifications**: Interactive feedback for actions like clearing chat or errors.
 
-## Code scaffolding
+## 🛠️ Technology Stack
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- **Framework**: Angular 21 (Standalone Components, Signals/RxJS)
+- **Styling**: Tailwind CSS v4 (CSS-first configuration)
+- **State Management**: RxJS BehaviorSubject
+- **Notifications**: `ngx-sonner`
+- **Build Tool**: Angular CLI (esbuild)
 
-```bash
-ng generate component component-name
-```
+## 🚀 Getting Started
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Prerequisites
 
-```bash
-ng generate --help
-```
+- Node.js (v18+)
+- npm
 
-## Building
+### Installation
 
-To build the project run:
+1.  **Clone the repository**
 
-```bash
-ng build
-```
+    ```bash
+    git clone https://github.com/yourusername/internal-gpt.git
+    cd internal-gpt
+    ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+2.  **Install dependencies**
 
-## Running unit tests
+    ```bash
+    npm install
+    ```
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+3.  **Start the development server**
 
-```bash
-ng test
-```
+    ```bash
+    npm start
+    ```
 
-## Running end-to-end tests
+4.  **Open in Browser**
+    Navigate to `http://localhost:4200`.
 
-For end-to-end (e2e) testing, run:
+## ⚙️ Configuration
 
-```bash
-ng e2e
-```
+Click the **Settings** (gear icon) in the header to configure your AI connection:
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+| Setting        | Description                                                                  |
+| :------------- | :--------------------------------------------------------------------------- |
+| **Provider**   | Choose "OpenAI" (default) or "Custom".                                       |
+| **Base URL**   | The API endpoint (e.g., `https://api.openai.com/v1` or your local endpoint). |
+| **Model Name** | Specify the model handling the request (e.g., `gpt-4`, `deepseek-chat`).     |
+| **API Key**    | Your provider's API key. Stored locally.                                     |
 
-## Additional Resources
+## 📐 Architecture
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+For a deep dive into the system design, core services, and component structure, please refer to the [Architecture Documentation](./ARCHITECTURE.md).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).

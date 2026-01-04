@@ -31,17 +31,18 @@ import { Component, EventEmitter, Output } from '@angular/core';
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
-        <button
-          *ngFor="let prompt of suggestedPrompts"
-          (click)="onPromptClick(prompt)"
-          class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors text-left group"
-        >
-          <p
-            class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors"
+        @for (prompt of suggestedPrompts; track prompt) {
+          <button
+            (click)="onPromptClick(prompt)"
+            class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors text-left group"
           >
-            {{ prompt }}
-          </p>
-        </button>
+            <p
+              class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors"
+            >
+              {{ prompt }}
+            </p>
+          </button>
+        }
       </div>
     </div>
   `,

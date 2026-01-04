@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
       <div class="max-w-3xl mx-auto">
         <form
           (ngSubmit)="onSubmit()"
-          class="relative flex items-end gap-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-2 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 focus-within:border-transparent transition-all"
+          class="relative flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-2 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 focus-within:border-transparent transition-all"
         >
           <div class="flex-1 min-w-0">
             <input
@@ -29,54 +29,53 @@ import { FormsModule } from '@angular/forms';
           <button
             type="submit"
             [disabled]="!messageText.trim() || isLoading"
-            class="p-2 mb-1 mr-1 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
+            class="p-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
           >
-            <svg
-              *ngIf="!isLoading"
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 12h14M12 5l7 7-7 7"
-              ></path>
-            </svg>
-            <svg
-              *ngIf="isLoading"
-              class="w-4 h-4 animate-spin"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              ></path>
-            </svg>
+            @if (!isLoading) {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 12h14M12 5l7 7-7 7"
+                ></path>
+              </svg>
+            }
+            @if (isLoading) {
+              <svg
+                class="w-4 h-4 animate-spin"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                ></path>
+              </svg>
+            }
           </button>
         </form>
 
-        <div class="mt-2 text-center">
+        <div class="mt-2 text-right pr-2">
           <p class="text-[11px] text-slate-400 dark:text-slate-500">
             Internal GPT can make mistakes. Consider checking important information.
           </p>
-          <div *ngIf="error" class="mt-2 inline-flex items-center gap-1.5 text-xs text-red-500">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              ></path>
-            </svg>
-            {{ error }}
-          </div>
+          @if (error) {
+            <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                ></path>
+              </svg>
+              {{ error }}
+            </div>
+          }
         </div>
       </div>
     </div>

@@ -17,6 +17,47 @@ import { SettingsModalComponent } from '../settings-modal/settings-modal.compone
 import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.component';
 
 @Component({
+  selector: 'app-clear-chat-toast',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div class="w-full flex flex-col gap-3">
+      <div class="text-sm font-medium text-slate-800 dark:text-slate-200 text-left">
+        Are you sure you want to clear the conversation?
+      </div>
+      <div class="flex gap-2 justify-end">
+        <button
+          (click)="onCancel()"
+          class="px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900"
+        >
+          Cancel
+        </button>
+        <button
+          (click)="onConfirm()"
+          class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 hover:bg-red-600 transition-colors rounded-lg shadow-sm shadow-red-500/20"
+        >
+          Clear Chat
+        </button>
+      </div>
+    </div>
+  `,
+  styles: [],
+})
+export class ClearChatToastComponent {
+  constructor(private chatService: ChatService) {}
+
+  onCancel() {
+    toast.dismiss();
+  }
+
+  onConfirm() {
+    this.chatService.clearMessages();
+    toast.dismiss();
+    toast.success('Chat cleared');
+  }
+}
+
+@Component({
   selector: 'app-chat-container',
   standalone: true,
   imports: [
@@ -29,7 +70,7 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
   ],
   template: `
     <ngx-sonner-toaster
-      position="top-center"
+      position="bottom-right"
       [expand]="true"
       [richColors]="true"
     ></ngx-sonner-toaster>
@@ -46,51 +87,40 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
         </div>
 
         <div class="flex items-center gap-1">
-          <button
-            *ngIf="chatState.messages.length > 0"
-            (click)="clearChat()"
-            class="btn-icon"
-            title="Clear Chat"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              ></path>
-            </svg>
-          </button>
+          @if (chatState.messages.length > 0) {
+            <button (click)="clearChat()" class="btn-icon" title="Clear Chat">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                ></path>
+              </svg>
+            </button>
+          }
 
           <button (click)="toggleDarkMode()" class="btn-icon" title="Toggle Theme">
-            <svg
-              *ngIf="!isDarkMode"
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-              ></path>
-            </svg>
-            <svg
-              *ngIf="isDarkMode"
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-              ></path>
-            </svg>
+            @if (!isDarkMode) {
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                ></path>
+              </svg>
+            }
+            @if (isDarkMode) {
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                ></path>
+              </svg>
+            }
           </button>
 
           <button (click)="showSettings = true" class="btn-icon" title="Settings">
@@ -113,22 +143,28 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
       </header>
 
       <!-- Settings Modal -->
-      <app-settings-modal *ngIf="showSettings" (close)="showSettings = false"></app-settings-modal>
+      @if (showSettings) {
+        <app-settings-modal (close)="showSettings = false"></app-settings-modal>
+      }
 
       <!-- Main Content -->
       <div class="flex-1 flex flex-col overflow-hidden relative">
         <div class="flex-1 relative overflow-hidden">
           <!-- Welcome Screen -->
-          <div *ngIf="chatState.messages.length === 0" class="absolute inset-0 z-0">
-            <app-welcome-screen (promptSelected)="onPromptSelected($event)"></app-welcome-screen>
-          </div>
+          @if (chatState.messages.length === 0) {
+            <div class="absolute inset-0 z-0">
+              <app-welcome-screen (promptSelected)="onPromptSelected($event)"></app-welcome-screen>
+            </div>
+          }
 
           <!-- Messages -->
-          <div *ngIf="chatState.messages.length > 0" class="h-full relative z-10">
-            <div class="h-full max-w-3xl mx-auto w-full">
-              <app-message-list [messages]="chatState.messages" #messageList> </app-message-list>
+          @if (chatState.messages.length > 0) {
+            <div class="h-full relative z-10">
+              <div class="h-full max-w-3xl mx-auto w-full">
+                <app-message-list [messages]="chatState.messages" #messageList> </app-message-list>
+              </div>
             </div>
-          </div>
+          }
         </div>
 
         <!-- Input -->
@@ -176,9 +212,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
     });
 
     // Check for dark mode preference
-    this.isDarkMode =
-      localStorage.getItem('darkMode') === 'true' ||
-      window.matchMedia('(prefers-color-scheme: dark)').matches;
+    this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+    if (!localStorage.getItem('darkMode')) {
+      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
     this.applyDarkMode();
   }
 
@@ -203,18 +240,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   clearChat(): void {
-    toast('Are you sure?', {
-      action: {
-        label: 'Clear Chat',
-        onClick: () => {
-          this.chatService.clearMessages();
-          toast.success('Chat cleared');
-        },
-      },
-      cancel: {
-        label: 'Cancel',
-      },
-    });
+    toast(ClearChatToastComponent, { duration: Infinity });
   }
 
   toggleDarkMode(): void {
