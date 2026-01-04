@@ -1,6 +1,8 @@
 export const APP_METADATA = {
-  name: 'Internal GPT',
-  description: 'A private, secure, and minimalist AI chat assistant powered by OpenAI models.',
-  author: 'DeepMind Team',
+  name: 'Internal Chat',
+  description: 'A private, secure, and minimalist AI chat assistant powered by many models.',
+  author: 'Md Tareq',
+  authorUrl: 'https://tareqnmd.com',
+  authorImage: 'shared/author.webp',
   version: '1.0.0',
 };
