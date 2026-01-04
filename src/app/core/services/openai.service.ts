@@ -114,4 +114,20 @@ export class OpenaiService {
       throw error;
     }
   }
+  async checkConnection(baseUrl: string, apiKey: string): Promise<boolean> {
+    const url = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    try {
+      const response = await fetch(`${url}/models`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      return response.ok;
+    } catch (e) {
+      console.error('Connection check failed:', e);
+      return false;
+    }
+  }
 }
