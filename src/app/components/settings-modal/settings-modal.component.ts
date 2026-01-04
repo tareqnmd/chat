@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AIProvider, ThemeMode } from '../../core/models/settings.model';
+import { VerificationStatus } from '../../core/models/ui.model';
 import { OpenaiService } from '../../core/services/openai.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { IconAlertComponent, IconCheckComponent, IconCloseComponent } from '../icons';
@@ -104,8 +106,10 @@ import { ButtonComponent } from '../shared/button/button.component';
                 (change)="onProviderChange()"
                 class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm appearance-none"
               >
-                <option value="openai">Standard (OpenAI / Compatible)</option>
-                <option value="custom">Custom / Compatible (DeepSeek, Groq, etc.)</option>
+                <option [value]="AIProvider.OPENAI">Standard (OpenAI / Compatible)</option>
+                <option [value]="AIProvider.CUSTOM">
+                  Custom / Compatible (DeepSeek, Groq, etc.)
+                </option>
               </select>
             </div>
 
@@ -116,8 +120,8 @@ import { ButtonComponent } from '../shared/button/button.component';
               <input
                 type="text"
                 [(ngModel)]="baseUrl"
-                [disabled]="provider === 'openai'"
-                [class.opacity-50]="provider === 'openai'"
+                [disabled]="provider === AIProvider.OPENAI"
+                [class.opacity-50]="provider === AIProvider.OPENAI"
                 class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-mono"
               />
               <div class="mt-1 text-xs text-slate-500">APIs compatible with OpenAI structure.</div>
@@ -143,12 +147,12 @@ import { ButtonComponent } from '../shared/button/button.component';
                 variant="secondary"
                 size="sm"
               >
-                @if (verificationStatus === 'success') {
+                @if (verificationStatus === VerificationStatus.SUCCESS) {
                   <span class="text-green-500 font-medium flex items-center gap-x-1">
                     <icon-check class="w-3 h-3"></icon-check>
                     Verified
                   </span>
-                } @else if (verificationStatus === 'error') {
+                } @else if (verificationStatus === VerificationStatus.ERROR) {
                   <span class="text-red-500 font-medium flex items-center gap-x-1">
                     <icon-close class="w-3 h-3"></icon-close>
                     Failed
@@ -191,15 +195,21 @@ import { ButtonComponent } from '../shared/button/button.component';
 export class SettingsModalComponent {
   @Output() close = new EventEmitter<void>();
 
+  // Expose enums to template
+  readonly AIProvider = AIProvider;
+  readonly ThemeMode = ThemeMode;
+  readonly VerificationStatus = VerificationStatus;
+
   apiKey = '';
   showKey = false;
 
-  provider: 'openai' | 'custom' = 'openai';
+  provider: AIProvider = AIProvider.OPENAI;
   baseUrl = 'https://api.openai.com/v1';
   model = 'gpt-3.5-turbo';
+  theme: ThemeMode = ThemeMode.SYSTEM;
 
   isVerifying = false;
-  verificationStatus: 'idle' | 'success' | 'error' = 'idle';
+  verificationStatus: VerificationStatus = VerificationStatus.IDLE;
 
   constructor(
     private settingsService: SettingsService,
@@ -207,13 +217,14 @@ export class SettingsModalComponent {
   ) {
     const settings = this.settingsService.getSettings();
     this.apiKey = settings.apiKey || '';
-    this.provider = settings.provider || 'openai';
+    this.provider = settings.provider || AIProvider.OPENAI;
     this.baseUrl = settings.baseUrl || 'https://api.openai.com/v1';
     this.model = settings.model || 'gpt-3.5-turbo';
+    this.theme = settings.theme || ThemeMode.SYSTEM;
   }
 
   onProviderChange(): void {
-    if (this.provider === 'openai') {
+    if (this.provider === AIProvider.OPENAI) {
       this.baseUrl = 'https://api.openai.com/v1';
     } else {
       this.baseUrl = ''; // Clear for custom
@@ -224,19 +235,19 @@ export class SettingsModalComponent {
     if (!this.apiKey) return;
 
     this.isVerifying = true;
-    this.verificationStatus = 'idle';
+    this.verificationStatus = VerificationStatus.IDLE;
 
     try {
       const isValid = await this.openaiService.checkConnection(this.baseUrl, this.apiKey);
-      this.verificationStatus = isValid ? 'success' : 'error';
+      this.verificationStatus = isValid ? VerificationStatus.SUCCESS : VerificationStatus.ERROR;
     } catch (e) {
-      this.verificationStatus = 'error';
+      this.verificationStatus = VerificationStatus.ERROR;
     } finally {
       this.isVerifying = false;
       // Reset status after a few seconds
       setTimeout(() => {
-        if (this.verificationStatus !== 'idle') {
-          this.verificationStatus = 'idle';
+        if (this.verificationStatus !== VerificationStatus.IDLE) {
+          this.verificationStatus = VerificationStatus.IDLE;
         }
       }, 3000);
     }

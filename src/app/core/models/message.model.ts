@@ -1,7 +1,13 @@
+export enum MessageRole {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+  SYSTEM = 'system',
+}
+
 export interface Message {
   id: string;
   content: string;
-  role: 'user' | 'assistant' | 'system';
+  role: MessageRole;
   timestamp: Date;
   isTyping?: boolean;
 }
@@ -13,7 +19,7 @@ export interface ChatState {
 }
 
 export interface OpenAIMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: MessageRole;
   content: string;
 }
 

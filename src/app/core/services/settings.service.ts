@@ -1,13 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export interface UserSettings {
-  apiKey: string | null;
-  provider: 'openai' | 'custom';
-  baseUrl: string;
-  model: string;
-  theme: 'light' | 'dark' | 'system';
-}
+import { AIProvider, ThemeMode, UserSettings } from '../models/settings.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,8 +17,8 @@ export class SettingsService {
 
   constructor() {
     this.mediaQuery.addEventListener('change', () => {
-      if (this.settingsSubject.value.theme === 'system') {
-        this.applyTheme('system');
+      if (this.settingsSubject.value.theme === ThemeMode.SYSTEM) {
+        this.applyTheme(ThemeMode.SYSTEM);
       }
     });
     this.applyTheme(this.settingsSubject.value.theme);
@@ -38,10 +32,10 @@ export class SettingsService {
 
         return {
           apiKey: parsed.apiKey || null,
-          provider: parsed.provider || 'openai',
+          provider: parsed.provider || AIProvider.OPENAI,
           baseUrl: parsed.baseUrl || 'https://api.openai.com/v1',
           model: parsed.model || 'gpt-3.5-turbo',
-          theme: parsed.theme || 'system',
+          theme: parsed.theme || ThemeMode.SYSTEM,
         };
       } catch (e) {
         console.error('Failed to parse settings', e);
@@ -49,10 +43,10 @@ export class SettingsService {
     }
     return {
       apiKey: null,
-      provider: 'openai',
+      provider: AIProvider.OPENAI,
       baseUrl: 'https://api.openai.com/v1',
       model: 'gpt-3.5-turbo',
-      theme: 'system',
+      theme: ThemeMode.SYSTEM,
     };
   }
 
@@ -79,12 +73,12 @@ export class SettingsService {
     this.saveSettings({ apiKey: null });
   }
 
-  private applyTheme(theme: 'light' | 'dark' | 'system'): void {
+  private applyTheme(theme: ThemeMode): void {
     let isDark = false;
-    if (theme === 'system') {
+    if (theme === ThemeMode.SYSTEM) {
       isDark = this.mediaQuery.matches;
     } else {
-      isDark = theme === 'dark';
+      isDark = theme === ThemeMode.DARK;
     }
 
     this.isDarkModeSubject.next(isDark);

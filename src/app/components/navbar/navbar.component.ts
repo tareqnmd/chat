@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { APP_METADATA } from '../../core/config/app-metadata.config';
+import { ThemeMode } from '../../core/models/settings.model';
 import { SettingsService } from '../../core/services/settings.service';
 import {
   IconHistoryComponent,
@@ -109,7 +110,7 @@ export class NavbarComponent {
 
   toggleDarkMode(): void {
     const currentTheme = this.settingsService.getSettings().theme;
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    const newTheme = currentTheme === ThemeMode.DARK ? ThemeMode.LIGHT : ThemeMode.DARK;
     this.settingsService.saveSettings({ theme: newTheme });
   }
 

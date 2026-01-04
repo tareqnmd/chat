@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { Message } from '../../core/models/message.model';
+import { Message, MessageRole } from '../../core/models/message.model';
 import { IconBotComponent, IconUserComponent } from '../icons';
 
 interface ContentBlock {
@@ -19,14 +19,14 @@ interface ContentBlock {
         <div class="group w-full text-text-main border-b border-border-fade pb-8 last:border-0">
           <div class="max-w-3xl mx-auto flex gap-4 md:gap-6">
             <div class="flex-shrink-0 flex flex-col relative items-end">
-              @if (message.role === 'user') {
+              @if (message.role === MessageRole.USER) {
                 <div
                   class="w-10 h-10 rounded-2xl bg-surface-app border border-border-fade flex items-center justify-center shadow-sm"
                 >
                   <icon-user class="w-6 h-6 text-text-sub"></icon-user>
                 </div>
               }
-              @if (message.role === 'assistant') {
+              @if (message.role === MessageRole.ASSISTANT) {
                 <div
                   class="w-10 h-10 rounded-2xl bg-primary-main flex items-center justify-center shadow-md shadow-primary-main/10"
                 >
@@ -39,7 +39,7 @@ interface ContentBlock {
               <div class="flex flex-col gap-y-2">
                 <div class="flex items-center gap-x-3">
                   <span class="text-sm font-semibold tracking-tight">{{
-                    message.role === 'user' ? 'You' : 'AI Assistant'
+                    message.role === MessageRole.USER ? 'You' : 'AI Assistant'
                   }}</span>
                   <span
                     class="text-[10px] text-text-dim font-medium uppercase tracking-widest opacity-60"
@@ -115,6 +115,7 @@ interface ContentBlock {
   styles: [],
 })
 export class MessageListComponent {
+  readonly MessageRole = MessageRole;
   @Input() messages: Message[] = [];
 
   trackByMessageId(index: number, message: Message): string {

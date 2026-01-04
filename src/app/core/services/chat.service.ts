@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ChatSession, ChatState, Message } from '../models/message.model';
+import { ChatSession, ChatState, Message, MessageRole } from '../models/message.model';
 import { OpenaiService } from './openai.service';
 import { StorageService } from './storage.service';
 
@@ -178,7 +178,7 @@ export class ChatService {
     await this.addMessageToSession(activeId, {
       id: this.generateId(),
       content,
-      role: 'user',
+      role: MessageRole.USER,
       timestamp: new Date(),
     });
 
@@ -197,18 +197,16 @@ export class ChatService {
     });
 
     try {
-      const apiMessages = session.messages
-        .map((msg) => ({
-          role: (msg as any).role === 'typing' ? 'assistant' : msg.role,
-          content: msg.content,
-        }))
-        .filter((m) => (m as any).role !== 'typing');
+      const apiMessages = session.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
 
       const typingId = 'typing';
       const typingMessage: Message = {
         id: typingId,
         content: '',
-        role: 'assistant',
+        role: MessageRole.ASSISTANT,
         timestamp: new Date(),
         isTyping: true,
       };
@@ -235,7 +233,7 @@ export class ChatService {
       await this.addMessageToSession(activeId, {
         id: this.generateId(),
         content: fullResponse,
-        role: 'assistant',
+        role: MessageRole.ASSISTANT,
         timestamp: new Date(),
       });
 
