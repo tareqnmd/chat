@@ -30,27 +30,29 @@ import { ButtonComponent } from '../shared/button/button.component';
     <header
       class="sticky top-0 z-10 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/50 px-4 py-3 flex items-center justify-between"
     >
-      <div class="flex items-center gap-2 cursor-pointer" (click)="reloadPage()">
+      <a routerLink="/" class="flex items-center gap-2 group transition-opacity hover:opacity-80">
         <h1 class="text-base font-medium text-slate-700 dark:text-slate-200">
           Chat
           <span class="text-slate-400 font-normal text-xs ml-1 max-sm:hidden">{{
             (settingsService.settings$ | async)?.model
           }}</span>
         </h1>
-      </div>
+      </a>
 
       <div class="flex items-center gap-2">
         <div class="flex-1 flex justify-end">
-          <app-button
-            (onClick)="createNewChat.emit()"
-            [disabled]="!hasMessages"
-            variant="primary"
-            size="sm"
-            className="max-md:hidden flex items-center gap-2"
-          >
-            <icon-plus class="w-4 h-4"></icon-plus>
-            <span>New Chat</span>
-          </app-button>
+          @if (hasMessages) {
+            <app-button
+              (onClick)="createNewChat.emit()"
+              [disabled]="!hasMessages"
+              variant="primary"
+              size="sm"
+              className="max-md:hidden flex items-center gap-2"
+            >
+              <icon-plus class="w-4 h-4"></icon-plus>
+              <span>New Chat</span>
+            </app-button>
+          }
 
           <app-button
             (onClick)="createNewChat.emit()"
@@ -65,14 +67,14 @@ import { ButtonComponent } from '../shared/button/button.component';
 
         <a
           routerLink="/history"
-          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mr-1"
+          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           <icon-history class="w-6 h-6"></icon-history>
         </a>
 
-        <button routerLink="/history" class="md:hidden btn-icon" title="History">
+        <a routerLink="/history" class="md:hidden btn-icon" title="History">
           <icon-history class="w-6 h-6"></icon-history>
-        </button>
+        </a>
 
         @if (hasMessages) {
           <button (click)="clearChat.emit()" class="btn-icon" title="Clear Chat">
