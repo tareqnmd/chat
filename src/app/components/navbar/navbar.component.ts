@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { SettingsService } from '../../core/services/settings.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <header
       class="sticky top-0 z-10 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/50 px-4 py-3 flex items-center justify-between"
@@ -19,10 +20,13 @@ import { SettingsService } from '../../core/services/settings.service';
         </h1>
       </div>
 
-      <div class="absolute left-1/2 -translate-x-1/2 hidden md:block">
+      <div class="flex items-center gap-1">
+        <!-- Desktop New Chat -->
         <button
           (click)="createNewChat.emit()"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900/50 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+          [disabled]="!hasMessages"
+          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900/50 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          title="New Chat"
         >
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -34,9 +38,52 @@ import { SettingsService } from '../../core/services/settings.service';
           </svg>
           New Chat
         </button>
-      </div>
 
-      <div class="flex items-center gap-1">
+        <!-- Desktop History -->
+        <a
+          routerLink="/history"
+          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors mr-1"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          History
+        </a>
+
+        <!-- Mobile New Chat -->
+        <button
+          (click)="createNewChat.emit()"
+          [disabled]="!hasMessages"
+          class="md:hidden ml-2 btn-icon disabled:opacity-50 disabled:cursor-not-allowed"
+          title="New Chat"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M12 4v16m8-8H4"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Mobile History -->
+        <button routerLink="/history" class="md:hidden ml-2 btn-icon" title="History">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </button>
+
         @if (hasMessages) {
           <button (click)="clearChat.emit()" class="btn-icon" title="Clear Chat">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
