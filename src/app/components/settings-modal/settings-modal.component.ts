@@ -12,11 +12,11 @@ import { SettingsService } from '../../core/services/settings.service';
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
     >
       <div
-        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100"
+        class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]"
       >
         <!-- Header -->
         <div
-          class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50"
+          class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 flex-shrink-0"
         >
           <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Settings</h2>
           <button
@@ -35,11 +35,12 @@ import { SettingsService } from '../../core/services/settings.service';
         </div>
 
         <!-- Body -->
-        <div class="p-6 space-y-6">
+        <div class="p-6 space-y-5 overflow-y-auto">
+          <!-- API Key Section -->
           <div>
-            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
-              >OpenAI API Key</label
-            >
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              API Key <span class="text-red-500">*</span>
+            </label>
             <div class="relative">
               <input
                 [type]="showKey ? 'text' : 'password'"
@@ -87,14 +88,76 @@ import { SettingsService } from '../../core/services/settings.service';
                 </svg>
               </button>
             </div>
-            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              Your key is stored locally in your browser and never sent to our servers.
+            <p
+              *ngIf="!apiKey"
+              class="mt-1 text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1"
+            >
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                ></path>
+              </svg>
+              Key is required
             </p>
+          </div>
+
+          <div class="border-t border-slate-100 dark:border-slate-800 pt-5">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+              Model Configuration
+            </h3>
+
+            <!-- Provider Select -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                >Provider</label
+              >
+              <select
+                [(ngModel)]="provider"
+                (change)="onProviderChange()"
+                class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm appearance-none"
+              >
+                <option value="openai">OpenAI (Default)</option>
+                <option value="custom">Custom / Compatible (DeepSeek, Groq, etc.)</option>
+              </select>
+            </div>
+
+            <!-- Base URL -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                >Base URL</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="baseUrl"
+                [disabled]="provider === 'openai'"
+                [class.opacity-50]="provider === 'openai'"
+                class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-mono"
+              />
+              <p class="mt-1 text-xs text-slate-500">APIs compatible with OpenAI structure.</p>
+            </div>
+
+            <!-- Model Name -->
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                >Model Name</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="model"
+                placeholder="e.g. gpt-4, deepseek-coder"
+                class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm font-mono"
+              />
+            </div>
           </div>
         </div>
 
         <!-- Footer -->
-        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3">
+        <div
+          class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 flex-shrink-0"
+        >
           <button
             (click)="close.emit()"
             class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
@@ -103,7 +166,8 @@ import { SettingsService } from '../../core/services/settings.service';
           </button>
           <button
             (click)="saveSettings()"
-            class="px-5 py-2 text-sm font-medium text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900 rounded-lg hover:opacity-90 transition-opacity"
+            [disabled]="!apiKey"
+            class="px-5 py-2 text-sm font-medium text-white bg-slate-900 dark:bg-slate-100 dark:text-slate-900 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Changes
           </button>
@@ -133,16 +197,33 @@ export class SettingsModalComponent {
   apiKey = '';
   showKey = false;
 
+  provider: 'openai' | 'custom' = 'openai';
+  baseUrl = 'https://api.openai.com/v1';
+  model = 'gpt-3.5-turbo';
+
   constructor(private settingsService: SettingsService) {
-    this.apiKey = this.settingsService.getApiKey() || '';
+    const settings = this.settingsService.getSettings();
+    this.apiKey = settings.apiKey || '';
+    this.provider = settings.provider || 'openai';
+    this.baseUrl = settings.baseUrl || 'https://api.openai.com/v1';
+    this.model = settings.model || 'gpt-3.5-turbo';
+  }
+
+  onProviderChange(): void {
+    if (this.provider === 'openai') {
+      this.baseUrl = 'https://api.openai.com/v1';
+    } else {
+      // Allow user to edit, maybe clear or keep current
+    }
   }
 
   saveSettings(): void {
-    if (this.apiKey.trim()) {
-      this.settingsService.setApiKey(this.apiKey.trim());
-    } else {
-      this.settingsService.clearApiKey();
-    }
+    this.settingsService.saveSettings({
+      apiKey: this.apiKey.trim() || null,
+      provider: this.provider,
+      baseUrl: this.baseUrl.trim(),
+      model: this.model.trim(),
+    });
     this.close.emit();
   }
 }

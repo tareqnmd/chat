@@ -7,6 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { NgxSonnerToaster, toast } from 'ngx-sonner';
 import { Subject, takeUntil } from 'rxjs';
 import { ChatState } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
@@ -24,8 +25,15 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
     MessageInputComponent,
     WelcomeScreenComponent,
     SettingsModalComponent,
+    NgxSonnerToaster,
   ],
   template: `
+    <ngx-sonner-toaster
+      position="top-center"
+      [expand]="true"
+      [richColors]="true"
+    ></ngx-sonner-toaster>
+
     <div class="h-screen flex flex-col bg-white dark:bg-slate-950">
       <!-- Header -->
       <header
@@ -157,6 +165,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
       const previousMessageCount = this.chatState.messages.length;
       this.chatState = state;
 
+      if (state.error) {
+        toast.error(state.error);
+      }
+
       // Scroll to bottom when new messages arrive
       if (state.messages.length > previousMessageCount) {
         this.shouldScrollToBottom = true;
@@ -191,9 +203,18 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   clearChat(): void {
-    if (confirm('Are you sure you want to clear all messages?')) {
-      this.chatService.clearMessages();
-    }
+    toast('Are you sure?', {
+      action: {
+        label: 'Clear Chat',
+        onClick: () => {
+          this.chatService.clearMessages();
+          toast.success('Chat cleared');
+        },
+      },
+      cancel: {
+        label: 'Cancel',
+      },
+    });
   }
 
   toggleDarkMode(): void {

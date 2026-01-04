@@ -7,8 +7,6 @@ import { SettingsService } from './settings.service';
   providedIn: 'root',
 })
 export class OpenaiService {
-  private apiUrl = 'https://api.openai.com/v1/chat/completions';
-
   constructor(private settingsService: SettingsService) {}
 
   private getHeaders(): HeadersInit {
@@ -22,13 +20,27 @@ export class OpenaiService {
     };
   }
 
+  private getApiUrl(): string {
+    const settings = this.settingsService.getSettings();
+    let baseUrl = settings.baseUrl.trim();
+    if (baseUrl.endsWith('/')) {
+      baseUrl = baseUrl.slice(0, -1);
+    }
+    // Handle cases where user might pasting full URL or base
+    // Standard convention: Base URL is `https://api.openai.com/v1`
+    // Endpoint is `/chat/completions`
+    // If user puts full path, use it? No, safer to assume standard structure for "compatible" APIs
+    return `${baseUrl}/chat/completions`;
+  }
+
   async sendMessage(messages: OpenAIMessage[]): Promise<string> {
+    const settings = this.settingsService.getSettings();
     try {
-      const response = await fetch(this.apiUrl, {
+      const response = await fetch(this.getApiUrl(), {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: settings.model,
           messages: messages,
           temperature: 0.7,
           max_tokens: 1000,
@@ -36,14 +48,14 @@ export class OpenaiService {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to get response from OpenAI');
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error?.message || `API Error: ${response.statusText}`);
       }
 
       const data = await response.json();
       return data.choices[0]?.message?.content || 'No response received';
     } catch (error) {
-      console.error('OpenAI API Error:', error);
+      console.error('API Error:', error);
       throw error;
     }
   }
@@ -52,12 +64,13 @@ export class OpenaiService {
     messages: OpenAIMessage[],
     onChunk: (chunk: string) => void,
   ): Promise<void> {
+    const settings = this.settingsService.getSettings();
     try {
-      const response = await fetch(this.apiUrl, {
+      const response = await fetch(this.getApiUrl(), {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: settings.model,
           messages: messages,
           temperature: 0.7,
           max_tokens: 1000,
@@ -66,8 +79,8 @@ export class OpenaiService {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to get response from OpenAI');
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.error?.message || `API Error: ${response.statusText}`);
       }
 
       const reader = response.body?.getReader();
@@ -102,7 +115,7 @@ export class OpenaiService {
         }
       }
     } catch (error) {
-      console.error('OpenAI API Stream Error:', error);
+      console.error('API Stream Error:', error);
       throw error;
     }
   }

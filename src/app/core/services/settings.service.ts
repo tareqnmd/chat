@@ -3,6 +3,9 @@ import { BehaviorSubject } from 'rxjs';
 
 export interface UserSettings {
   apiKey: string | null;
+  provider: 'openai' | 'custom';
+  baseUrl: string;
+  model: string;
   theme: 'light' | 'dark' | 'system';
 }
 
@@ -19,13 +22,24 @@ export class SettingsService {
     const stored = localStorage.getItem('user-settings');
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // Ensure defaults for new fields
+        return {
+          apiKey: parsed.apiKey || null,
+          provider: parsed.provider || 'openai',
+          baseUrl: parsed.baseUrl || 'https://api.openai.com/v1',
+          model: parsed.model || 'gpt-3.5-turbo',
+          theme: parsed.theme || 'system',
+        };
       } catch (e) {
         console.error('Failed to parse settings', e);
       }
     }
     return {
       apiKey: null,
+      provider: 'openai',
+      baseUrl: 'https://api.openai.com/v1',
+      model: 'gpt-3.5-turbo',
       theme: 'system',
     };
   }
@@ -38,6 +52,10 @@ export class SettingsService {
 
   getApiKey(): string | null {
     return this.settingsSubject.value.apiKey;
+  }
+
+  getSettings(): UserSettings {
+    return this.settingsSubject.value;
   }
 
   setApiKey(key: string): void {
