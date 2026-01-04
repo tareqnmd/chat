@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /history
+Disallow: /chat/*
+
+Sitemap: https://chat-bot-demo.example.com/sitemap.xml

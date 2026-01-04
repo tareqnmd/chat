@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { ChatSession } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
-import { IconBackComponent, IconHistoryComponent, IconTrashComponent } from '../icons';
+import { IconHistoryComponent, IconTrashComponent } from '../icons';
 import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
@@ -15,34 +15,11 @@ import { ButtonComponent } from '../shared/button/button.component';
     RouterModule,
     IconHistoryComponent,
     IconTrashComponent,
-    IconBackComponent,
+    IconTrashComponent,
     ButtonComponent,
   ],
   template: `
-    <div class="h-screen flex flex-col bg-white dark:bg-slate-950">
-      <!-- Header -->
-      <header
-        class="sticky top-0 z-10 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/50 px-4 py-3 flex items-center justify-between"
-      >
-        <div class="flex items-center gap-3">
-          <button
-            routerLink="/"
-            class="hidden md:flex items-center justify-center btn-icon"
-            title="Back to Chat"
-          >
-            <icon-back class="w-5 h-5"></icon-back>
-          </button>
-          <button
-            routerLink="/"
-            class="md:hidden flex items-center justify-center btn-icon"
-            title="Back to Chat"
-          >
-            <icon-back class="w-5 h-5"></icon-back>
-          </button>
-          <h1 class="text-base font-medium text-slate-700 dark:text-slate-200">Chat History</h1>
-        </div>
-      </header>
-
+    <div class="h-full flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
       <!-- Content -->
       <div class="flex-1 overflow-y-auto p-4 md:p-6">
         <div class="max-w-3xl mx-auto space-y-4">

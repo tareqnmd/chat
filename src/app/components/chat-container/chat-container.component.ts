@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   AfterViewChecked,
   Component,
@@ -9,51 +8,24 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgxSonnerToaster, toast } from 'ngx-sonner';
+import { toast } from 'ngx-sonner';
 import { Subject, takeUntil } from 'rxjs';
 import { ChatState } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { MessageInputComponent } from '../message-input/message-input.component';
-import { MessageListComponent } from '../message-list/message-list.component';
-import { NavbarComponent } from '../navbar/navbar.component';
-import { SettingsModalComponent } from '../settings-modal/settings-modal.component';
 import { ClearChatToastComponent } from '../shared/clear-chat-toast.component';
 import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.component';
+
+import { CommonModule } from '@angular/common';
+import { MessageListComponent } from '../message-list/message-list.component';
 
 @Component({
   selector: 'app-chat-container',
   standalone: true,
-  imports: [
-    CommonModule,
-    MessageListComponent,
-    MessageInputComponent,
-    WelcomeScreenComponent,
-    SettingsModalComponent,
-    NgxSonnerToaster,
-    NavbarComponent,
-  ],
+  imports: [CommonModule, MessageListComponent, MessageInputComponent, WelcomeScreenComponent],
   template: `
-    <ngx-sonner-toaster
-      position="bottom-right"
-      [expand]="true"
-      [richColors]="true"
-    ></ngx-sonner-toaster>
-
-    <div class="h-screen flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
-      <!-- Sticky Header -->
-      <app-navbar
-        class="flex-shrink-0"
-        [hasMessages]="chatState.messages.length > 0"
-        (openSettings)="showSettings = true"
-        (clearChat)="clearChat()"
-        (createNewChat)="onNewChat()"
-      ></app-navbar>
-
-      @if (showSettings) {
-        <app-settings-modal (close)="showSettings = false"></app-settings-modal>
-      }
-
+    <div class="h-full flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
       <!-- Main Scrollable Area -->
       <div class="flex-1 overflow-y-auto w-full">
         <div class="min-h-full flex flex-col">
@@ -105,10 +77,9 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   private shouldScrollToBottom: ScrollBehavior | null = null;
 
   @Input()
-  set id(value: string) {
-    if (value === 'new') {
-      const newId = this.chatService.createSession();
-      this.router.navigate(['chat', newId], { replaceUrl: true });
+  set id(value: string | undefined) {
+    if (!value || value === 'new') {
+      this.chatService.deactivateSession();
     } else {
       this.chatService.activateSession(value);
     }
@@ -152,11 +123,21 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
     this.destroy$.complete();
   }
 
-  onSendMessage(message: string): void {
+  async onSendMessage(message: string): Promise<void> {
+    let activeId = this.chatService.getActiveSessionId();
+    if (!activeId) {
+      activeId = this.chatService.createSession();
+      await this.router.navigate(['chat', activeId], { replaceUrl: true });
+    }
     this.chatService.sendUserMessage(message);
   }
 
-  onPromptSelected(prompt: string): void {
+  async onPromptSelected(prompt: string): Promise<void> {
+    let activeId = this.chatService.getActiveSessionId();
+    if (!activeId) {
+      activeId = this.chatService.createSession();
+      await this.router.navigate(['chat', activeId], { replaceUrl: true });
+    }
     this.chatService.sendUserMessage(prompt);
   }
 

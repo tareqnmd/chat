@@ -1,1 +1,23 @@
-<router-outlet></router-outlet>
+<div class="h-screen flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
+  <ngx-sonner-toaster
+    position="bottom-right"
+    [expand]="true"
+    [richColors]="true"
+  ></ngx-sonner-toaster>
+
+  <app-navbar
+    class="flex-shrink-0"
+    [hasMessages]="hasMessages"
+    (openSettings)="showSettings = true"
+    (clearChat)="clearChat()"
+    (createNewChat)="onNewChat()"
+  ></app-navbar>
+
+  @if (showSettings) {
+    <app-settings-modal (close)="showSettings = false"></app-settings-modal>
+  }
+
+  <main class="flex-1 overflow-hidden">
+    <router-outlet></router-outlet>
+  </main>
+</div>

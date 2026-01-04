@@ -13,6 +13,10 @@ export class ChatService {
   private activeSessionIdSubject = new BehaviorSubject<string | null>(null);
   public activeSessionId$ = this.activeSessionIdSubject.asObservable();
 
+  getActiveSessionId(): string | null {
+    return this.activeSessionIdSubject.value;
+  }
+
   private chatStateSubject = new BehaviorSubject<ChatState>({
     messages: [],
     isLoading: false,
@@ -104,6 +108,15 @@ export class ChatService {
         error: 'Chat not found',
       });
     }
+  }
+
+  deactivateSession(): void {
+    this.activeSessionIdSubject.next(null);
+    this.chatStateSubject.next({
+      messages: [],
+      isLoading: false,
+      error: null,
+    });
   }
 
   deleteSession(id: string): void {
