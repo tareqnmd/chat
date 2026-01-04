@@ -8,7 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgxSonnerToaster, toast } from 'ngx-sonner';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { ChatState } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
 import { SettingsService } from '../../core/services/settings.service';
@@ -77,13 +77,15 @@ export class ClearChatToastComponent {
     ></ngx-sonner-toaster>
 
     <div class="h-screen flex flex-col bg-white dark:bg-slate-950">
-      <!-- Header -->
       <header
         class="sticky top-0 z-10 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/50 px-4 py-3 flex items-center justify-between"
       >
         <div class="flex items-center gap-2" (click)="reloadPage()" class="cursor-pointer">
           <h1 class="text-base font-medium text-slate-700 dark:text-slate-200">
-            Internal GPT <span class="text-slate-400 font-normal">3.5</span>
+            Internal GPT
+            <span class="text-slate-400 font-normal text-xs ml-1">{{
+              (settings$ | async)?.model
+            }}</span>
           </h1>
         </div>
 
@@ -143,22 +145,17 @@ export class ClearChatToastComponent {
         </div>
       </header>
 
-      <!-- Settings Modal -->
       @if (showSettings) {
         <app-settings-modal (close)="showSettings = false"></app-settings-modal>
       }
-
-      <!-- Main Content -->
       <div class="flex-1 flex flex-col overflow-hidden relative">
         <div class="flex-1 relative overflow-hidden">
-          <!-- Welcome Screen -->
           @if (chatState.messages.length === 0) {
             <div class="absolute inset-0 z-0">
               <app-welcome-screen (promptSelected)="onPromptSelected($event)"></app-welcome-screen>
             </div>
           }
 
-          <!-- Messages -->
           @if (chatState.messages.length > 0) {
             <div class="h-full relative z-10">
               <div class="h-full max-w-3xl mx-auto w-full">
@@ -168,7 +165,6 @@ export class ClearChatToastComponent {
           }
         </div>
 
-        <!-- Input -->
         <app-message-input
           [isLoading]="chatState.isLoading"
           [error]="chatState.error"
@@ -191,7 +187,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
 
   isDarkMode = false;
   showSettings = false;
-  private destroy$ = new Subject<void>();
+  settings$!: Observable<any>;
+  public destroy$ = new Subject<void>();
   private shouldScrollToBottom = false;
 
   constructor(
@@ -200,6 +197,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   ) {}
 
   ngOnInit(): void {
+    this.settings$ = this.settingsService.settings$; // Initialize here
+
     this.chatService.chatState$.pipe(takeUntil(this.destroy$)).subscribe((state) => {
       const previousMessageCount = this.chatState.messages.length;
       this.chatState = state;

@@ -13,7 +13,6 @@ import { Message } from '../../core/models/message.model';
           class="group w-full text-slate-800 dark:text-slate-100 border-b border-black/5 dark:border-white/5 pb-6 last:border-0"
         >
           <div class="max-w-3xl mx-auto flex gap-4 md:gap-6">
-            <!-- Avatar -->
             <div class="flex-shrink-0 flex flex-col relative items-end">
               @if (message.role === 'user') {
                 <div
@@ -41,9 +40,7 @@ import { Message } from '../../core/models/message.model';
               }
             </div>
 
-            <!-- Content -->
             <div class="relative flex-1 overflow-hidden">
-              <!-- Name & Time -->
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-sm font-semibold">{{
                   message.role === 'user' ? 'You' : 'AI Assistant'
@@ -53,13 +50,11 @@ import { Message } from '../../core/models/message.model';
                 }}</span>
               </div>
 
-              <!-- Message Text -->
               <div class="prose dark:prose-invert max-w-none text-[15px] leading-7">
                 @if (!message.isTyping) {
                   <p class="whitespace-pre-wrap">{{ message.content }}</p>
                 }
 
-                <!-- Typing Indicator -->
                 @if (message.isTyping) {
                   <div class="flex flex-col gap-2">
                     @if (message.content) {

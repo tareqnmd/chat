@@ -14,7 +14,6 @@ import { SettingsService } from '../../core/services/settings.service';
       <div
         class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]"
       >
-        <!-- Header -->
         <div
           class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 flex-shrink-0"
         >
@@ -34,9 +33,7 @@ import { SettingsService } from '../../core/services/settings.service';
           </button>
         </div>
 
-        <!-- Body -->
         <div class="p-6 space-y-5 overflow-y-auto">
-          <!-- API Key Section -->
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
               API Key <span class="text-red-500">*</span>
@@ -100,7 +97,6 @@ import { SettingsService } from '../../core/services/settings.service';
               Model Configuration
             </h3>
 
-            <!-- Provider Select -->
             <div class="mb-4">
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                 >Provider</label
@@ -115,7 +111,6 @@ import { SettingsService } from '../../core/services/settings.service';
               </select>
             </div>
 
-            <!-- Base URL -->
             <div class="mb-4">
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                 >Base URL</label
@@ -130,7 +125,6 @@ import { SettingsService } from '../../core/services/settings.service';
               <p class="mt-1 text-xs text-slate-500">APIs compatible with OpenAI structure.</p>
             </div>
 
-            <!-- Model Name -->
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                 >Model Name</label
@@ -145,7 +139,6 @@ import { SettingsService } from '../../core/services/settings.service';
           </div>
         </div>
 
-        <!-- Footer -->
         <div
           class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 flex-shrink-0"
         >
