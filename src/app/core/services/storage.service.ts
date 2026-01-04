@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class StorageService {
-  private readonly dbName = 'chat-bot-db';
+  private readonly dbName = 'chat-db';
   private readonly storeName = 'sessions';
   private readonly version = 1;
   private db: IDBDatabase | null = null;

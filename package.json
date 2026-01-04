@@ -1,5 +1,5 @@
 {
-  "name": "chat-bot",
+  "name": "chat",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "prepare": "husky",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "ng lint",
+    "lint-staged": "lint-staged"
   },
   "prettier": {
     "printWidth": 100,
@@ -47,7 +49,9 @@
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.0.0",
     "@tailwindcss/postcss": "^4.1.18",
+    "angular-eslint": "21.1.0",
     "autoprefixer": "^10.4.23",
+    "eslint": "^9.39.1",
     "husky": "^9.1.7",
     "jsdom": "^27.1.0",
     "lint-staged": "^16.2.7",
@@ -55,6 +59,7 @@
     "prettier": "^3.7.4",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.2",
+    "typescript-eslint": "8.47.0",
     "vitest": "^4.0.8"
   }
 }

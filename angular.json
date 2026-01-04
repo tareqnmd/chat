@@ -2,11 +2,13 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "37b93163-a453-4054-887f-5f344753fb17",
+    "schematicCollections": ["angular-eslint"]
   },
   "newProjectRoot": "projects",
   "projects": {
-    "chat-bot": {
+    "chat": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -55,16 +57,22 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "chat-bot:build:production"
+              "buildTarget": "chat:build:production"
             },
             "development": {
-              "buildTarget": "chat-bot:build:development"
+              "buildTarget": "chat:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
         }
       }
     }
