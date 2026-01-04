@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   AfterViewChecked,
   Component,
@@ -14,18 +15,16 @@ import { ChatState } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
 import { SettingsService } from '../../core/services/settings.service';
 import { MessageInputComponent } from '../message-input/message-input.component';
+import { MessageListComponent } from '../message-list/message-list.component';
 import { ClearChatToastComponent } from '../shared/clear-chat-toast.component';
 import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.component';
-
-import { CommonModule } from '@angular/common';
-import { MessageListComponent } from '../message-list/message-list.component';
 
 @Component({
   selector: 'app-chat-container',
   standalone: true,
   imports: [CommonModule, MessageListComponent, MessageInputComponent, WelcomeScreenComponent],
   template: `
-    <div class="h-full flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
+    <div class="h-full flex flex-col bg-bg-app overflow-hidden">
       <!-- Main Scrollable Area -->
       <div class="flex-1 overflow-y-auto w-full">
         <div class="min-h-full flex flex-col">
@@ -48,9 +47,7 @@ import { MessageListComponent } from '../message-list/message-list.component';
       </div>
 
       <!-- Sticky Footer -->
-      <div
-        class="flex-shrink-0 border-t border-slate-100 dark:border-slate-800/50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm"
-      >
+      <div class="flex-shrink-0 border-t border-border-fade bg-surface-app/80 backdrop-blur-sm">
         <app-message-input
           [isLoading]="chatState.isLoading"
           [error]="chatState.error"
@@ -73,7 +70,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   isDarkMode = false;
   showSettings = false;
   public destroy$ = new Subject<void>();
-  // Changed from boolean to ScrollBehavior | null
   private shouldScrollToBottom: ScrollBehavior | null = null;
 
   @Input()
@@ -101,7 +97,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
       }
 
       if (state.messages.length > previousMessageCount) {
-        // Instant scroll if loading fresh (from 0), smooth if adding new messages
         this.shouldScrollToBottom = previousMessageCount === 0 ? 'auto' : 'smooth';
       }
     });
@@ -146,7 +141,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   onNewChat(): void {
-    this.router.navigate(['chat', 'new']);
+    this.router.navigate(['/']);
   }
 
   private scrollToBottom(behavior: ScrollBehavior = 'auto'): void {

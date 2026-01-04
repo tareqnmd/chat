@@ -6,6 +6,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { SettingsModalComponent } from './components/settings-modal/settings-modal.component';
 import { ClearChatToastComponent } from './components/shared/clear-chat-toast.component';
 import { ChatService } from './core/services/chat.service';
+import { MetaService } from './core/services/meta.service';
 
 @Component({
   selector: 'app-root',
@@ -28,9 +29,11 @@ export class App implements OnInit {
   constructor(
     private chatService: ChatService,
     private router: Router,
+    private metaService: MetaService,
   ) {}
 
   ngOnInit(): void {
+    this.metaService.initDefaultMeta();
     this.chatService.chatState$.subscribe((state) => {
       this.hasMessages = state.messages.length > 0;
     });

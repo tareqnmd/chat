@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { APP_METADATA } from '../../core/config/app-metadata.config';
 import { SettingsService } from '../../core/services/settings.service';
 import {
   IconHistoryComponent,
@@ -28,12 +29,12 @@ import { ButtonComponent } from '../shared/button/button.component';
   ],
   template: `
     <header
-      class="sticky top-0 z-10 bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800/50 px-4 py-3 flex items-center justify-between"
+      class="sticky top-0 z-10 bg-bg-app border-b border-border-fade px-4 py-3 flex items-center justify-between"
     >
       <a routerLink="/" class="flex items-center gap-2 group transition-opacity hover:opacity-80">
-        <h1 class="text-base font-medium text-slate-700 dark:text-slate-200">
-          Chat
-          <span class="text-slate-400 font-normal text-xs ml-1 max-sm:hidden">{{
+        <h1 class="text-base font-medium text-text-main">
+          {{ appTitle }}
+          <span class="text-text-dim font-normal text-xs ml-1 max-sm:hidden">{{
             (settingsService.settings$ | async)?.model
           }}</span>
         </h1>
@@ -67,7 +68,7 @@ import { ButtonComponent } from '../shared/button/button.component';
 
         <a
           routerLink="/history"
-          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-text-sub hover:bg-border-fade transition-colors"
         >
           <icon-history class="w-6 h-6"></icon-history>
         </a>
@@ -98,6 +99,7 @@ import { ButtonComponent } from '../shared/button/button.component';
   `,
 })
 export class NavbarComponent {
+  appTitle = APP_METADATA.name;
   @Input() hasMessages = false;
   @Output() openSettings = new EventEmitter<void>();
   @Output() clearChat = new EventEmitter<void>();
