@@ -11,18 +11,24 @@ _(Active Chat Interface)_
 ## ✨ Features
 
 - **Minimalist Design**: Clean, distraction-free UI inspired by modern chat interfaces.
-- **Dynamic AI Provider**: Switch seamlessly between OpenAI and custom/compatible providers (e.g., DeepSeek, LocalAI) by configuring the Base URL.
-- **Private & Secure**: API keys and settings are stored locally in your browser (`localStorage`). No backend tracking.
+- **Offline Support (PWA)**: Full Progressive Web App support ensures the app works offline and is installable.
+- **Scalable Storage**: Uses **IndexedDB** for high-performance, asynchronous storage of large chat histories.
+- **Multi-Session History**: Navigate through past conversations with a dedicated history view.
+- **Real-time Search**: Quickly find past chats by title or message content.
+- **Code Optimization**: Rich code block rendering with "Copy Code" functionality.
+- **Dynamic AI Provider**: Switch seamlessly between OpenAI and custom/compatible providers (e.g., DeepSeek, Groq) by configuring the Base URL.
+- **Private & Secure**: API keys are stored locally in your browser. No backend tracking.
 - **Customizable**: Toggle between Light and Dark modes.
-- **Responsive**: Fully optimized for desktop and mobile.
-- **Toast Notifications**: Interactive feedback for actions like clearing chat or errors.
+- **Responsive**: Fully optimized for desktop and mobile with standardized Flex/Grid layouts.
 
 ## 🛠️ Technology Stack
 
 - **Framework**: Angular 21 (Standalone Components, Signals/RxJS)
 - **Styling**: Tailwind CSS v4 (CSS-first configuration)
-- **State Management**: RxJS BehaviorSubject
+- **Persistence**: IndexedDB (Native API) + `localStorage` (Settings only)
+- **Offline**: `@angular/service-worker` (PWA)
 - **Notifications**: `ngx-sonner`
+- **Linting/Formatting**: Prettier + Husky + lint-staged
 - **Build Tool**: Angular CLI (esbuild)
 
 ## 🚀 Getting Started
@@ -53,19 +59,25 @@ _(Active Chat Interface)_
     npm start
     ```
 
-4.  **Open in Browser**
+4.  **Format Code (Optional)**
+
+    ```bash
+    npm run format
+    ```
+
+5.  **Open in Browser**
     Navigate to `http://localhost:4200`.
 
 ## ⚙️ Configuration
 
 Click the **Settings** (gear icon) in the header to configure your AI connection:
 
-| Setting        | Description                                                                  |
-| :------------- | :--------------------------------------------------------------------------- |
-| **Provider**   | Choose "OpenAI" (default) or "Custom".                                       |
-| **Base URL**   | The API endpoint (e.g., `https://api.openai.com/v1` or your local endpoint). |
-| **Model Name** | Specify the model handling the request (e.g., `gpt-4`, `deepseek-chat`).     |
-| **API Key**    | Your provider's API key. Stored locally.                                     |
+| Setting        | Description                                                                      |
+| :------------- | :------------------------------------------------------------------------------- |
+| **Provider**   | Choose "OpenAI" (default) or "Custom".                                           |
+| **Base URL**   | The API endpoint (e.g., `https://api.openai.com/v1` or your local endpoint).     |
+| **Model Name** | Specify the model handling the request (e.g., `gpt-3.5-turbo`, `deepseek-chat`). |
+| **API Key**    | Your provider's API key. Stored locally.                                         |
 
 ## 📐 Architecture
 

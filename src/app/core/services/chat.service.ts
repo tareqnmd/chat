@@ -14,6 +14,17 @@ export class ChatService {
   private activeSessionIdSubject = new BehaviorSubject<string | null>(null);
   public activeSessionId$ = this.activeSessionIdSubject.asObservable();
 
+  private pendingDeleteIdSubject = new BehaviorSubject<string | null>(null);
+  public pendingDeleteId$ = this.pendingDeleteIdSubject.asObservable();
+
+  setPendingDeleteId(id: string | null): void {
+    this.pendingDeleteIdSubject.next(id);
+  }
+
+  getPendingDeleteId(): string | null {
+    return this.pendingDeleteIdSubject.value;
+  }
+
   getActiveSessionId(): string | null {
     return this.activeSessionIdSubject.value;
   }

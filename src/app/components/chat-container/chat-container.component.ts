@@ -137,7 +137,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   }
 
   clearChat(): void {
-    toast(ClearChatToastComponent, { duration: Infinity });
+    toast(ClearChatToastComponent);
   }
 
   onNewChat(): void {

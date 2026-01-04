@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { toast } from 'ngx-sonner';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { ChatSession } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
-import { IconHistoryComponent, IconPlusComponent, IconTrashComponent } from '../icons';
+import { IconHistoryComponent, IconTrashComponent } from '../icons';
 import { ButtonComponent } from '../shared/button/button.component';
+import { DeleteSessionToastComponent } from '../shared/delete-session-toast.component';
 
 @Component({
   selector: 'app-history',
@@ -17,7 +19,6 @@ import { ButtonComponent } from '../shared/button/button.component';
     FormsModule,
     IconHistoryComponent,
     IconTrashComponent,
-    IconPlusComponent,
     ButtonComponent,
   ],
   template: `
@@ -25,7 +26,7 @@ import { ButtonComponent } from '../shared/button/button.component';
       <!-- Search & Actions Header -->
       <div class="px-4 py-4 md:px-6 border-b border-border-fade bg-surface-app/50 backdrop-blur-sm">
         <div class="max-w-3xl mx-auto flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div class="relative w-full md:max-w-md">
+          <div class="relative w-full">
             <input
               type="text"
               [(ngModel)]="searchQuery"
@@ -42,16 +43,6 @@ import { ButtonComponent } from '../shared/button/button.component';
               </button>
             }
           </div>
-
-          <app-button
-            (onClick)="createNewChat()"
-            variant="primary"
-            size="sm"
-            className="hidden md:flex items-center gap-2"
-          >
-            <icon-plus class="w-4 h-4"></icon-plus>
-            <span>New Chat</span>
-          </app-button>
         </div>
       </div>
 
@@ -162,8 +153,7 @@ export class HistoryComponent implements OnInit {
 
   async deleteSession(id: string, event: Event): Promise<void> {
     event.stopPropagation();
-    if (confirm('Are you sure you want to delete this chat?')) {
-      await this.chatService.deleteSession(id);
-    }
+    this.chatService.setPendingDeleteId(id);
+    toast(DeleteSessionToastComponent);
   }
 }

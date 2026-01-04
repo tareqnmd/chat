@@ -43,6 +43,6 @@ export class App implements OnInit {
   }
 
   clearChat(): void {
-    toast(ClearChatToastComponent, { duration: Infinity });
+    toast(ClearChatToastComponent);
   }
 }
