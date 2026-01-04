@@ -91,7 +91,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
   isDarkMode = false;
   showSettings = false;
   public destroy$ = new Subject<void>();
-  private shouldScrollToBottom = false;
+  // Changed from boolean to ScrollBehavior | null
+  private shouldScrollToBottom: ScrollBehavior | null = null;
 
   @Input()
   set id(value: string) {
@@ -119,7 +120,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
       }
 
       if (state.messages.length > previousMessageCount) {
-        this.shouldScrollToBottom = true;
+        // Instant scroll if loading fresh (from 0), smooth if adding new messages
+        this.shouldScrollToBottom = previousMessageCount === 0 ? 'auto' : 'smooth';
       }
     });
 
@@ -130,8 +132,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
 
   ngAfterViewChecked(): void {
     if (this.shouldScrollToBottom) {
-      this.scrollToBottom();
-      this.shouldScrollToBottom = false;
+      this.scrollToBottom(this.shouldScrollToBottom);
+      this.shouldScrollToBottom = null;
     }
   }
 
@@ -156,11 +158,14 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
     this.router.navigate(['chat', 'new']);
   }
 
-  private scrollToBottom(): void {
+  private scrollToBottom(behavior: ScrollBehavior = 'auto'): void {
     try {
       const messageContainer = document.querySelector('.overflow-y-auto');
       if (messageContainer) {
-        messageContainer.scrollTop = messageContainer.scrollHeight;
+        messageContainer.scrollTo({
+          top: messageContainer.scrollHeight,
+          behavior: behavior,
+        });
       }
     } catch (err) {
       console.error('Scroll error:', err);

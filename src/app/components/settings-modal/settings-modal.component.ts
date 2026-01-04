@@ -3,11 +3,24 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { OpenaiService } from '../../core/services/openai.service';
 import { SettingsService } from '../../core/services/settings.service';
+import {
+  IconAlertComponent,
+  IconCheckComponent,
+  IconCloseComponent,
+  IconSpinnerComponent,
+} from '../icons';
 
 @Component({
   selector: 'app-settings-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IconCloseComponent,
+    IconSpinnerComponent,
+    IconAlertComponent,
+    IconCheckComponent,
+  ],
   template: `
     <div
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
@@ -23,14 +36,7 @@ import { SettingsService } from '../../core/services/settings.service';
             (click)="close.emit()"
             class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
+            <icon-close class="w-5 h-5"></icon-close>
           </button>
         </div>
 
@@ -80,14 +86,7 @@ import { SettingsService } from '../../core/services/settings.service';
             </div>
             @if (!apiKey) {
               <p class="mt-1 text-xs text-amber-600 dark:text-amber-500 flex items-center gap-1">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  ></path>
-                </svg>
+                <icon-alert class="w-3 h-3"></icon-alert>
                 Key is required
               </p>
             }
@@ -146,50 +145,17 @@ import { SettingsService } from '../../core/services/settings.service';
                 class="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
               >
                 @if (isVerifying) {
-                  <svg
-                    class="animate-spin h-3 w-3"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      class="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      stroke-width="4"
-                    ></circle>
-                    <path
-                      class="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
+                  <icon-spinner class="animate-spin h-3 w-3"></icon-spinner>
                   Verifying...
                 } @else {
                   @if (verificationStatus === 'success') {
                     <span class="text-green-500 font-medium flex items-center gap-1">
-                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M5 13l4 4L19 7"
-                        ></path>
-                      </svg>
+                      <icon-check class="w-3 h-3"></icon-check>
                       Verified
                     </span>
                   } @else if (verificationStatus === 'error') {
                     <span class="text-red-500 font-medium flex items-center gap-1">
-                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        ></path>
-                      </svg>
+                      <icon-close class="w-3 h-3"></icon-close>
                       Failed
                     </span>
                   } @else {

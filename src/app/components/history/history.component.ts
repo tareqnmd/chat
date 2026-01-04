@@ -4,11 +4,18 @@ import { Router, RouterModule } from '@angular/router';
 import { map, Observable } from 'rxjs';
 import { ChatSession } from '../../core/models/message.model';
 import { ChatService } from '../../core/services/chat.service';
+import { IconBackComponent, IconHistoryComponent, IconTrashComponent } from '../icons';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    IconHistoryComponent,
+    IconTrashComponent,
+    IconBackComponent,
+  ],
   template: `
     <div class="h-screen flex flex-col bg-white dark:bg-slate-950">
       <!-- Header -->
@@ -21,28 +28,14 @@ import { ChatService } from '../../core/services/chat.service';
             class="hidden md:flex items-center justify-center btn-icon"
             title="Back to Chat"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              ></path>
-            </svg>
+            <icon-back class="w-5 h-5"></icon-back>
           </button>
           <button
             routerLink="/"
             class="md:hidden flex items-center justify-center btn-icon"
             title="Back to Chat"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1.5"
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              ></path>
-            </svg>
+            <icon-back class="w-5 h-5"></icon-back>
           </button>
           <h1 class="text-base font-medium text-slate-700 dark:text-slate-200">Chat History</h1>
         </div>
@@ -53,19 +46,7 @@ import { ChatService } from '../../core/services/chat.service';
         <div class="max-w-3xl mx-auto space-y-4">
           @if ((sessions$ | async)?.length === 0) {
             <div class="flex flex-col items-center justify-center py-20 text-slate-400">
-              <svg
-                class="w-16 h-16 mb-4 opacity-50"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="1.5"
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
+              <icon-history class="w-16 h-16 mb-4 opacity-50"></icon-history>
               <p class="text-lg font-medium">No chat history yet</p>
               <button
                 routerLink="/chat/new"
@@ -97,14 +78,7 @@ import { ChatService } from '../../core/services/chat.service';
                 class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                 title="Delete Chat"
               >
-                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.5"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  ></path>
-                </svg>
+                <icon-trash class="w-4.5 h-4.5"></icon-trash>
               </button>
             </div>
           }

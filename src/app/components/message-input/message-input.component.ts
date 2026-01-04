@@ -1,82 +1,43 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { IconSendComponent } from '../icons';
 
 @Component({
   selector: 'app-message-input',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, IconSendComponent],
   template: `
-    <div class="p-4 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800/50">
-      <div class="max-w-3xl mx-auto">
-        <form
-          (ngSubmit)="onSubmit()"
-          class="relative flex items-center gap-2 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 p-2 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 focus-within:border-transparent transition-all"
+    <div class="max-w-3xl mx-auto p-4">
+      <div class="relative group">
+        <textarea
+          #textarea
+          [(ngModel)]="message"
+          (keydown.enter)="onEnter($event)"
+          [disabled]="isLoading"
+          rows="1"
+          placeholder="Type your message..."
+          class="w-full pl-5 pr-14 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-slate-700/50 resize-none overflow-hidden min-h-[56px] text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-all duration-200 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
+        ></textarea>
+
+        <button
+          (click)="onSend()"
+          [disabled]="!message.trim() || isLoading"
+          class="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-md hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:scale-100 disabled:shadow-none transition-all duration-200 ease-spring"
         >
-          <div class="flex-1 min-w-0">
-            <input
-              type="text"
-              [(ngModel)]="messageText"
-              name="message"
-              [disabled]="isLoading"
-              (keydown.enter)="onEnterKey($any($event))"
-              placeholder="Send a message..."
-              class="w-full px-3 py-3 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-700 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 disabled:opacity-50 text-base"
-              autocomplete="off"
-            />
-          </div>
+          <icon-send class="w-4 h-4"></icon-send>
+        </button>
+      </div>
 
-          <button
-            type="submit"
-            [disabled]="!messageText.trim() || isLoading"
-            class="p-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded-lg hover:opacity-90 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-200"
-          >
-            @if (!isLoading) {
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M5 12h14M12 5l7 7-7 7"
-                ></path>
-              </svg>
-            }
-            @if (isLoading) {
-              <svg
-                class="w-4 h-4 animate-spin"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                ></path>
-              </svg>
-            }
-          </button>
-        </form>
-
-        <div class="mt-2 text-right pr-2">
-          <p class="text-[11px] text-slate-400 dark:text-slate-500">
-            Internal GPT can make mistakes. Consider checking important information.
+      <div class="mt-2 text-right pr-2">
+        @if (error) {
+          <p class="mb-1 text-xs text-red-500 flex justify-end items-center gap-1">
+            {{ error }}
           </p>
-          @if (error) {
-            <div class="mt-2 inline-flex items-center gap-1.5 text-xs text-red-500">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                ></path>
-              </svg>
-              {{ error }}
-            </div>
-          }
-        </div>
+        }
+        <p class="text-[11px] text-slate-400 dark:text-slate-500 text-center">
+          Internal GPT can make mistakes. Consider checking important information.
+        </p>
       </div>
     </div>
   `,
@@ -87,19 +48,29 @@ export class MessageInputComponent {
   @Input() error: string | null = null;
   @Output() sendMessage = new EventEmitter<string>();
 
-  messageText = '';
+  @ViewChild('textarea') textarea!: ElementRef<HTMLTextAreaElement>;
 
-  onSubmit(): void {
-    if (this.messageText.trim() && !this.isLoading) {
-      this.sendMessage.emit(this.messageText.trim());
-      this.messageText = '';
+  message = '';
+
+  onSend(): void {
+    if (this.message.trim() && !this.isLoading) {
+      this.sendMessage.emit(this.message.trim());
+      this.message = '';
+      this.resetHeight();
     }
   }
 
-  onEnterKey(event: KeyboardEvent): void {
-    if (!event.shiftKey) {
+  onEnter(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    if (!keyboardEvent.shiftKey) {
       event.preventDefault();
-      this.onSubmit();
+      this.onSend();
+    }
+  }
+
+  private resetHeight() {
+    if (this.textarea) {
+      this.textarea.nativeElement.style.height = 'auto';
     }
   }
 }

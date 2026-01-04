@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Message } from '../../core/models/message.model';
+import { IconBotComponent, IconUserComponent } from '../icons';
 
 @Component({
   selector: 'app-message-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconUserComponent, IconBotComponent],
   template: `
     <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6" #messageContainer>
       @for (message of messages; track message.id) {
@@ -18,24 +19,12 @@ import { Message } from '../../core/models/message.model';
                 <div
                   class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center"
                 >
-                  <span class="text-sm font-semibold text-slate-600 dark:text-slate-300">U</span>
+                  <icon-user class="w-5 h-5 text-slate-600 dark:text-slate-300"></icon-user>
                 </div>
               }
               @if (message.role === 'assistant') {
                 <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                  <svg
-                    class="w-5 h-5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    ></path>
-                  </svg>
+                  <icon-bot class="w-5 h-5 text-white"></icon-bot>
                 </div>
               }
             </div>

@@ -1,35 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
+import { IconBotComponent } from '../icons';
 
 @Component({
   selector: 'app-welcome-screen',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconBotComponent],
   template: `
-    <div class="flex flex-col items-center justify-center h-full p-4 text-center animate-fade-in">
-      <div class="mb-12">
-        <div
-          class="w-12 h-12 mx-auto mb-4 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700"
-        >
-          <svg
-            class="w-6 h-6 text-slate-800 dark:text-slate-200"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M13 10V3L4 14h7v7l9-11h-7z"
-            ></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
-          How can I help you today?
-        </h2>
+    <div class="flex-1 flex flex-col items-center justify-center p-4 text-center mt-[-10vh]">
+      <div
+        class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 shadow-sm"
+      >
+        <icon-bot class="w-8 h-8 text-slate-700 dark:text-slate-200"></icon-bot>
       </div>
-
+      <h2 class="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-2">
+        How can I help you today?
+      </h2>
+      <p class="text-slate-500 dark:text-slate-400 max-w-md mb-8">
+        I can help you write code, analyze data, or answer questions.
+      </p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
         @for (prompt of suggestedPrompts; track prompt) {
           <button
