@@ -16,3 +16,11 @@ export interface OpenAIMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  messages: Message[];
+  createdAt: number;
+  updatedAt: number;
+}
