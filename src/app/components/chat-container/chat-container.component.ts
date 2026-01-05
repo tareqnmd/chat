@@ -25,7 +25,6 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
   imports: [CommonModule, MessageListComponent, MessageInputComponent, WelcomeScreenComponent],
   template: `
     <div class="h-full flex flex-col bg-bg-app overflow-hidden">
-      <!-- Main Scrollable Area -->
       <div class="flex-1 overflow-y-auto w-full">
         <div class="min-h-full flex flex-col">
           @if (chatState.isInitialLoading && id && id !== 'new') {
@@ -73,7 +72,6 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
               </div>
             </div>
           } @else if (chatState.messages.length === 0) {
-            <!-- Centered Welcome Screen -->
             <div class="flex-1 flex flex-col items-center justify-center p-6 w-full">
               <div class="w-full max-w-3xl animate-slide-up">
                 <app-welcome-screen
@@ -82,7 +80,6 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
               </div>
             </div>
           } @else {
-            <!-- Chat Message List -->
             <div class="max-w-3xl mx-auto w-full pb-4">
               <app-message-list [messages]="chatState.messages" #messageList></app-message-list>
             </div>
@@ -90,8 +87,7 @@ import { WelcomeScreenComponent } from '../welcome-screen/welcome-screen.compone
         </div>
       </div>
 
-      <!-- Sticky Footer -->
-      <div class="flex-shrink-0 border-t border-border-fade bg-surface-app/80 backdrop-blur-sm">
+      <div class="shrink-0 border-t border-border-fade bg-surface-app/80 backdrop-blur-sm">
         <app-message-input
           [isLoading]="chatState.isLoading"
           [error]="chatState.error"

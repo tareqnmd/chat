@@ -18,7 +18,7 @@ interface ContentBlock {
       @for (message of messages; track message.id) {
         <div class="group w-full text-text-main border-b border-border-fade pb-8 last:border-0">
           <div class="max-w-3xl mx-auto flex gap-4 md:gap-6">
-            <div class="flex-shrink-0 flex flex-col relative items-end">
+            <div class="shrink-0 flex flex-col relative items-end">
               @if (message.role === MessageRole.USER) {
                 <div
                   class="w-10 h-10 rounded-2xl bg-surface-app border border-border-fade flex items-center justify-center shadow-sm"

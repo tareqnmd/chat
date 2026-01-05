@@ -27,7 +27,7 @@ import { ButtonComponent } from '../shared/button/button.component';
         class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]"
       >
         <div
-          class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 flex-shrink-0"
+          class="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50 shrink-0"
         >
           <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-100">Settings</h2>
           <button
@@ -165,9 +165,7 @@ import { ButtonComponent } from '../shared/button/button.component';
           </div>
         </div>
 
-        <div
-          class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 flex-shrink-0"
-        >
+        <div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50 flex justify-end gap-3 shrink-0">
           <app-button (onClick)="close.emit()" variant="ghost"> Cancel </app-button>
           <app-button (onClick)="saveSettings()" [disabled]="!apiKey" variant="primary">
             Save Changes
