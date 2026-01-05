@@ -232,14 +232,33 @@ export class ChatService {
     const activeId = this.activeSessionIdSubject.value;
     if (!activeId) return;
 
-    await this.addMessageToSession(activeId, {
+    const userMessage: Message = {
       id: this.generateId(),
       content,
       role: MessageRole.USER,
       timestamp: new Date(),
-    });
+    };
 
-    const session = this.sessionsSubject.value[activeId];
+    const sessions = { ...this.sessionsSubject.value };
+    if (sessions[activeId]) {
+      sessions[activeId] = {
+        ...sessions[activeId],
+        messages: [...sessions[activeId].messages, userMessage],
+        updatedAt: Date.now(),
+      };
+      this.sessionsSubject.next(sessions);
+
+      this.chatStateSubject.next({
+        messages: sessions[activeId].messages,
+        isLoading: false,
+        isInitialLoading: false,
+        error: null,
+      });
+    }
+
+    this.saveSession(sessions[activeId]);
+
+    const session = sessions[activeId];
     if (session.messages.length === 1) {
       await this.updateSessionTitle(
         activeId,
@@ -247,9 +266,19 @@ export class ChatService {
       );
     }
 
+    const typingId = 'typing';
+    const typingMessage: Message = {
+      id: typingId,
+      content: '',
+      role: MessageRole.ASSISTANT,
+      timestamp: new Date(),
+      isTyping: true,
+    };
+
     this.chatStateSubject.next({
-      ...this.chatStateSubject.value,
+      messages: [...session.messages, typingMessage],
       isLoading: true,
+      isInitialLoading: false,
       error: null,
     });
 
@@ -258,21 +287,6 @@ export class ChatService {
         role: msg.role,
         content: msg.content,
       }));
-
-      const typingId = 'typing';
-      const typingMessage: Message = {
-        id: typingId,
-        content: '',
-        role: MessageRole.ASSISTANT,
-        timestamp: new Date(),
-        isTyping: true,
-      };
-
-      const currentMessages = this.chatStateSubject.value.messages;
-      this.chatStateSubject.next({
-        ...this.chatStateSubject.value,
-        messages: [...currentMessages, typingMessage],
-      });
 
       let fullResponse = '';
       await this.openaiService.sendMessageStream(apiMessages as any, (chunk) => {
