@@ -139,6 +139,9 @@ export class ChatContainerComponent implements OnInit, OnDestroy, AfterViewCheck
     });
     this.chatService.chatState$.pipe(takeUntil(this.destroy$)).subscribe((state) => {
       this.latestChatState = state;
+      if (state.error) {
+        this.router.navigate(['/']);
+      }
     });
   }
 
