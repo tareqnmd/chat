@@ -23,7 +23,6 @@ import { DeleteSessionToastComponent } from '../shared/delete-session-toast.comp
   ],
   template: `
     <div class="h-full flex flex-col bg-bg-app overflow-hidden">
-      <!-- Search & Actions Header -->
       <div class="px-4 py-4 md:px-6 border-b border-border-fade bg-surface-app/50 backdrop-blur-sm">
         <div class="max-w-3xl mx-auto flex flex-col md:flex-row gap-4 items-center justify-between">
           <div class="relative w-full">
@@ -46,7 +45,6 @@ import { DeleteSessionToastComponent } from '../shared/delete-session-toast.comp
         </div>
       </div>
 
-      <!-- History List -->
       <div class="flex-1 overflow-y-auto p-4 md:p-6">
         <div class="max-w-3xl mx-auto space-y-3">
           @if ((filteredSessions$ | async)?.length === 0) {

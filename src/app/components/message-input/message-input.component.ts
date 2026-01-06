@@ -32,7 +32,7 @@ import { TextareaAutoresizeDirective } from '../shared/directives/textarea-autor
 
         <div class="absolute right-4 top-1/2 -translate-y-1/2">
           <app-button
-            className="!p-0"
+            className="p-0!"
             variant="icon"
             size="icon"
             (onClick)="onSend()"
