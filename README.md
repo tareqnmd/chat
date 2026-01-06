@@ -43,7 +43,7 @@ _(Active Chat Interface)_
 1.  **Clone the repository**
 
     ```bash
-    git clone https://github.com/yourusername/internal-gpt.git
+    git clone https://github.com/tareqnmd/chat.git
     cd internal-gpt
     ```
 
