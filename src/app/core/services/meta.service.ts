@@ -13,10 +13,20 @@ export class MetaService {
   ) {}
 
   initDefaultMeta(): void {
+    const authorHandle =
+      APP_METADATA.authorHandle || `@${APP_METADATA.authorUsername || 'tareqnmd'}`;
+    const authorImageUrl = `${SEO_CONFIG.baseUrl}${APP_METADATA.authorImage.startsWith('/') ? '' : '/'}${APP_METADATA.authorImage}`;
+
     this.updateTitle();
     this.updateMetaTags([
       { name: 'description', content: APP_METADATA.description },
-      { name: 'author', content: APP_METADATA.author },
+      { name: 'author', content: `${APP_METADATA.author} (${authorHandle})` },
+      { name: 'author:url', content: APP_METADATA.authorUrl },
+      {
+        name: 'author:username',
+        content: APP_METADATA.authorUsername || authorHandle.replace('@', ''),
+      },
+      { name: 'author:image', content: authorImageUrl },
       { name: 'robots', content: SEO_CONFIG.robots },
 
       { property: 'og:title', content: APP_METADATA.name },
@@ -24,10 +34,15 @@ export class MetaService {
       { property: 'og:type', content: SEO_CONFIG.ogType },
       { property: 'og:url', content: SEO_CONFIG.baseUrl },
       { property: 'og:image', content: SEO_CONFIG.baseUrl + SEO_CONFIG.ogImage },
+      { property: 'og:site_name', content: APP_METADATA.name },
+      { property: 'article:author', content: APP_METADATA.authorUrl },
 
       { name: 'twitter:card', content: SEO_CONFIG.twitterCard },
       { name: 'twitter:title', content: APP_METADATA.name },
       { name: 'twitter:description', content: APP_METADATA.description },
+      { name: 'twitter:creator', content: authorHandle },
+      { name: 'twitter:image', content: authorImageUrl },
+      { name: 'twitter:url', content: SEO_CONFIG.baseUrl },
     ]);
   }
 
